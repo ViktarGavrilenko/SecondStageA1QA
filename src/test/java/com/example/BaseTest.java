@@ -10,8 +10,9 @@ import org.testng.annotations.BeforeMethod;
 import static aquality.selenium.browser.AqualityServices.getBrowser;
 
 public class BaseTest {
-    private static ISettingsFile environment = new JsonSettingsFile("config.json");
-    protected static final String DEFAULT_URL = environment.getValue("/mainPage").toString();
+    protected static ISettingsFile configFile = new JsonSettingsFile("config.json");
+    protected static ISettingsFile testDataFile = new JsonSettingsFile("testData.json");
+    protected static final String DEFAULT_URL = configFile.getValue("/mainPage").toString();
 
     protected final IElementFactory elementFactory;
 
