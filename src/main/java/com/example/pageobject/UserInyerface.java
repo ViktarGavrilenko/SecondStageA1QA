@@ -74,15 +74,15 @@ public class UserInyerface extends Form {
     public ICheckBox getCheckBox(int index) {
         return elementFactory.getCheckBox(By.xpath(String.format
                         ("//div[@class='avatar-and-interests__interests-list__item'][%s]//label/span", index)),
-                "Interests");
+                "Interests" + index);
     }
 
     public void choiceInterests(int numberInterests, int maxNumberInterests) {
         unselectCheckbox(maxNumberInterests);
         List<Integer> interests = new ArrayList<>();
-        interests.add(getRandomNumberFromOneToMaxValue(maxNumberInterests));
+        interests.add(getRandomNumberFromOneToMaxValue(maxNumberInterests - 1));
         while (interests.size() < numberInterests) {
-            int index = getRandomNumberFromOneToMaxValue(maxNumberInterests);
+            int index = getRandomNumberFromOneToMaxValue(maxNumberInterests - 1);
             if (!interests.contains(index)) {
                 interests.add(index);
             }
@@ -93,9 +93,7 @@ public class UserInyerface extends Form {
     }
 
     public void unselectCheckbox(int maxNumberInterests) {
-        for (int i = 1; i <= maxNumberInterests; i++) {
-            getCheckBox(i).check();
-        }
+        getCheckBox(maxNumberInterests).check();
     }
 
     public void uploadPhoto(String filePath) {
