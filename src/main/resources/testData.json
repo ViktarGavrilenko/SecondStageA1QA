@@ -1,6 +1,9 @@
 {
-  "countInterests": 3,
+  "numberOfInterestsForSelection": 3,
   "photo": "c:\\1.jpg",
-  "email": "emailaddress@mail.org",
-  "password": "qWe1234Qwe"
+  "email": "emailaddress@mail.co.uk",
+  "startTimeOfTimer": "00:00:00",
+  "firstPage": "1 / 4",
+  "secondPage": "2 / 4",
+  "thirdPage": "3 / 4"
 }

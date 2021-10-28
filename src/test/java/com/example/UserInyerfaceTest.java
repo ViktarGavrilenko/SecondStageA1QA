@@ -1,29 +1,36 @@
 package com.example;
 
-import aquality.selenium.browser.AqualityServices;
-import com.example.pageobject.UserInyerface;
+import org.apache.log4j.Logger;
 import org.testng.annotations.Test;
 
-import java.awt.*;
-
+import static com.example.utils.StringUtils.generationPassword;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class UserInyerfaceTest extends BaseTest {
-    private static final String PATH_PHOTO = testDataFile.getValue("/photo").toString();
-    private static final int COUNT_INTERESTS = Integer.parseInt(testDataFile.getValue("/countInterests").toString());
-    private static final String EMAIL = testDataFile.getValue("/email").toString();
-    private static final String PASSWORD = testDataFile.getValue("/password").toString();
+    private static final Logger LOG = Logger.getLogger(UserInyerfaceTest.class);
 
-    @Test(description = "Тест формы UserInyerfaceForm")
-    public void testJavascriptFileUpload() throws AWTException, InterruptedException {
-        AqualityServices.getBrowser().goTo(DEFAULT_URL);
-        UserInyerface userInyerface = new UserInyerface();
-        assertEquals(userInyerface.getTextWithLink(), "HERE", "Страница UserInyerface не загрузилась");
+    private static final String PATH_PHOTO = TEST_DATA_FILE.getValue("/photo").toString();
+    private static final int NUMBER_INTERESTS =
+            Integer.parseInt(CONFIG_FILE.getValue("/numberInterests").toString());
+    private static final int NUMBER_INTERESTS_FOR_SELECTION =
+            Integer.parseInt(TEST_DATA_FILE.getValue("/numberOfInterestsForSelection").toString());
+    private static final String EMAIL = TEST_DATA_FILE.getValue("/email").toString();
+
+    @Test(description = "Testing the UserInyerfaceForm")
+    public void testUserInyerface() {
+        assertTrue(userInyerface.isLinkDisplayed(), "UserInyerface page didn't load");
         userInyerface.clickStartLink();
-        assertEquals(userInyerface.getTextWithLoginForm(), "1 / 4", "Страница с первой карточкой не открылась");
-        userInyerface.entryPasswordAndEmail(EMAIL, PASSWORD);
-        assertEquals(userInyerface.getTextWithLoginForm(), "2 / 4", "Страница со второй карточкой не открылась");
-        userInyerface.choiceInterestsAndUploadPhoto(COUNT_INTERESTS, PATH_PHOTO);
-        assertEquals(userInyerface.getTextWithLoginForm(), "3 / 4", "Страница с третьей карточкой не открылась");
+        LOG.info("Go to the first page");
+        assertEquals(userInyerface.getTextWithLoginForm(), TEST_DATA_FILE.getValue("/firstPage").toString(),
+                "The page with the first card did not open");
+        userInyerface.entryPasswordAndEmailAndAcceptTermsConditions(EMAIL, generationPassword(EMAIL));
+        LOG.info("Go to the second page");
+        assertEquals(userInyerface.getTextWithLoginForm(), TEST_DATA_FILE.getValue("/secondPage").toString(),
+                "The page with the second card did not open");
+        userInyerface.choiceInterestsAndUploadPhoto(NUMBER_INTERESTS_FOR_SELECTION, NUMBER_INTERESTS, PATH_PHOTO);
+        LOG.info("Go to the third page");
+        assertEquals(userInyerface.getTextWithLoginForm(), TEST_DATA_FILE.getValue("/thirdPage").toString(),
+                "The page with the third card did not open");
     }
 }

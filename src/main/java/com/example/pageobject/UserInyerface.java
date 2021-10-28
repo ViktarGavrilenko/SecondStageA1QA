@@ -3,21 +3,24 @@ package com.example.pageobject;
 import aquality.selenium.browser.AqualityServices;
 import aquality.selenium.elements.interfaces.*;
 import aquality.selenium.forms.Form;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.utils.ArithmeticUtils.getRandomNumberFromOneToTwentyOne;
+import static aquality.selenium.elements.ElementType.TEXTBOX;
+import static com.example.utils.ArithmeticUtils.getRandomNumberFromOneToMaxValue;
 import static com.example.utils.BrowserUtils.uploadFile;
-import static com.example.utils.StringUtils.getFirstPartEmail;
-import static com.example.utils.StringUtils.getSecondPartEmail;
+import static com.example.utils.StringUtils.*;
 
 public class UserInyerface extends Form {
 
+    private static final Logger LOG = Logger.getLogger(UserInyerface.class);
     IElementFactory elementFactory = AqualityServices.getElementFactory();
-    ILink startLink = elementFactory.getLink(By.xpath("//a[@class='start__link']"), "UserInyerface");
+
+    ILink startLink = elementFactory.getLink(By.xpath("//a[@class='start__link']"), "StartLink");
     ITextBox pageIndicator = elementFactory.getTextBox(By.xpath("//div[@class='page-indicator']"),
             "PageIndicator");
     ITextBox fieldForPassword =
@@ -31,8 +34,6 @@ public class UserInyerface extends Form {
                     "SecondPartOFEmail");
     ITextBox fieldOfThirdPartOFEmail =
             elementFactory.getTextBox(By.xpath("//div[@class='dropdown__field']"), "ThirdPartOFEmail");
-    ITextBox domainOfEmail =
-            elementFactory.getTextBox(By.xpath("//div[@class='dropdown__list-item'][1]"), "DomainOfEmail");
     ICheckBox checkBoxAcceptTermsConditions =
             elementFactory.getCheckBox(By.xpath("//span[@class='checkbox']"), "AcceptTermsConditions");
     ILink buttonNextForSecondPage =
@@ -41,13 +42,15 @@ public class UserInyerface extends Form {
             elementFactory.getLink(By.xpath("//a[@class='avatar-and-interests__upload-button']"), "UploadPhoto");
     IButton buttonNextForThirdPage = elementFactory.getButton(By.xpath("//button[contains(@class, 'button--stroked')]"),
             "NextButtonForThirdPage");
+    ITextBox fieldTimer =
+            elementFactory.getTextBox(By.xpath("//div[contains(@class, 'timer--white')]"), "FieldTimer");
 
     public UserInyerface() {
-        super(By.id("//a[@class='start__link']"), "UserInyerface");
+        super(By.xpath("//a[@class='start__link']"), "UserInyerface");
     }
 
-    public String getTextWithLink() {
-        return startLink.getText();
+    public boolean isLinkDisplayed() {
+        return startLink.state().isDisplayed();
     }
 
     public void clickStartLink() {
@@ -58,12 +61,12 @@ public class UserInyerface extends Form {
         return pageIndicator.getText();
     }
 
-    public void entryPasswordAndEmail(String email, String password) {
+    public void entryPasswordAndEmailAndAcceptTermsConditions(String email, String password) {
         fieldForPassword.clearAndType(password);
         fieldOfFirstPartOFEmail.clearAndType(getFirstPartEmail(email));
         fieldOfSecondPartOFEmail.clearAndType(getSecondPartEmail(email));
         fieldOfThirdPartOFEmail.click();
-        domainOfEmail.click();
+        getDomainOfEmail(email).click();
         checkBoxAcceptTermsConditions.check();
         buttonNextForSecondPage.click();
     }
@@ -74,35 +77,56 @@ public class UserInyerface extends Form {
                 "Interests");
     }
 
-    public void choiceInterests(int countInterests) {
-        unselectCheckbox();
+    public void choiceInterests(int numberInterests, int maxNumberInterests) {
+        unselectCheckbox(maxNumberInterests);
         List<Integer> interests = new ArrayList<>();
-        interests.add(getRandomNumberFromOneToTwentyOne());
-        while (interests.size() < countInterests) {
-            int index = getRandomNumberFromOneToTwentyOne();
+        interests.add(getRandomNumberFromOneToMaxValue(maxNumberInterests));
+        while (interests.size() < numberInterests) {
+            int index = getRandomNumberFromOneToMaxValue(maxNumberInterests);
             if (!interests.contains(index)) {
                 interests.add(index);
             }
         }
-        for (int i = 0; i < countInterests; i++) {
+        for (int i = 0; i < numberInterests; i++) {
             getCheckBox(interests.get(i)).check();
         }
     }
 
-    public void unselectCheckbox() {
-        for (int i = 1; i < 22; i++) {
+    public void unselectCheckbox(int maxNumberInterests) {
+        for (int i = 1; i <= maxNumberInterests; i++) {
             getCheckBox(i).check();
         }
     }
 
-    public void uploadPhoto(String filePath) throws AWTException, InterruptedException {
+    public void uploadPhoto(String filePath) {
         uploadPhoto.click();
-        uploadFile(filePath);
+        try {
+            uploadFile(filePath);
+        } catch (AWTException | InterruptedException e) {
+            LOG.error("File upload error " + e);
+        }
     }
 
-    public void choiceInterestsAndUploadPhoto(int countInterests, String filePath) throws AWTException, InterruptedException {
-        choiceInterests(countInterests);
+    public void choiceInterestsAndUploadPhoto(int numberInterests, int maxNumberInterests, String filePath) {
+        choiceInterests(numberInterests, maxNumberInterests);
         uploadPhoto(filePath);
         buttonNextForThirdPage.click();
+    }
+
+    public String getStartTimeOfTimer() {
+        return fieldTimer.getText();
+    }
+
+    public ITextBox getDomainOfEmail(String email) {
+        List<ITextBox> domains =
+                elementFactory.findElements(By.xpath("//div[@class='dropdown__list-item']"), "Domains", TEXTBOX);
+        for (int i = 0; i < domains.size(); i++) {
+            if (domains.get(i).getText().equals(getThirdPartEmail(email))) {
+                return elementFactory.getTextBox(By.xpath
+                        (String.format("//div[@class='dropdown__list-item'][%s]", i + 1)), "DomainEmail");
+            }
+        }
+        LOG.error("Incorrect Email");
+        return null;
     }
 }
