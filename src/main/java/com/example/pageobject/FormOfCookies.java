@@ -1,27 +1,25 @@
 package com.example.pageobject;
 
-import aquality.selenium.browser.AqualityServices;
 import aquality.selenium.elements.interfaces.IButton;
-import aquality.selenium.elements.interfaces.IElementFactory;
 import aquality.selenium.elements.interfaces.ITextBox;
 import aquality.selenium.forms.Form;
 import org.openqa.selenium.By;
 
 public class FormOfCookies extends Form {
+    private final IButton buttonAcceptCookies = getElementFactory().getButton(
+            By.xpath("//button[contains(@class, 'button--transparent')]"), "AcceptCookies");
 
-    IElementFactory elementFactory = AqualityServices.getElementFactory();
-
-    IButton buttonAcceptCookies = elementFactory.getButton(By.xpath("//button[contains(@class, 'button--transparent')]"),
-            "AcceptCookies");
-
-    ITextBox formCookies = elementFactory.getTextBox(By.xpath("//div[@class='cookies']"), "FormOfCookies");
+    private final ITextBox formCookies = getElementFactory().getTextBox(By.className("cookies"), "FormOfCookies");
 
     public FormOfCookies() {
-        super(By.xpath("//div[@class='cookies']"), "FormOfCookies");
+        super(By.className("cookies"), "FormOfCookies");
     }
 
-    public boolean isFormDisappearedAfterClickingAcceptCookies() {
+    public void clickAcceptCookies() {
         buttonAcceptCookies.click();
+    }
+
+    public boolean isCookiesFormDisplayed() {
         return formCookies.state().isDisplayed();
     }
 }

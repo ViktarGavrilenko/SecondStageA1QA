@@ -3,10 +3,11 @@ package com.example.utils;
 import java.util.Random;
 
 public class StringUtils {
-
     private static final Random RANDOM = new Random();
     private static final int NUMBER_OF_LETTERS_ALPHABET = 26;
-
+    private static final int NUMBER_OF_DIGITS_IN_PASSWORD = 4;
+    private static final int NUMBER_OF_CAPITAL_LETTERS_IN_PASSWORD = 3;
+    private static final int NUMBER_OF_LOWERCASE_LETTERS_IN_PASSWORD = 2;
 
     public static String getFirstPartEmail(String email) {
         return email.substring(0, email.indexOf('@'));
@@ -27,23 +28,32 @@ public class StringUtils {
     }
 
     public static String generationPassword(String email) {
+        StringBuilder dataForPassword = new StringBuilder();
         StringBuilder password = new StringBuilder();
-        for (int i = 0; i < 10; i++) {
-            if (i < 4 || i == 7) {
-                password.append(RANDOM.nextInt(9));
-            } else {
-                if (i == 6) {
-                    password.append(email.charAt(0));
-                } else {
-                    if (i < 8) {
-                        password.append(String.valueOf(
-                                (char) (RANDOM.nextInt(NUMBER_OF_LETTERS_ALPHABET) + 'a')).toUpperCase());
-                    } else {
-                        password.append((char) (RANDOM.nextInt(NUMBER_OF_LETTERS_ALPHABET) + 'a'));
-                    }
-                }
-            }
+
+        for (int i = 0; i < NUMBER_OF_DIGITS_IN_PASSWORD; i++) {
+            dataForPassword.append(RANDOM.nextInt(9));
         }
+
+        for (int i = 0; i < NUMBER_OF_LOWERCASE_LETTERS_IN_PASSWORD; i++) {
+            dataForPassword.append((char) (RANDOM.nextInt(NUMBER_OF_LETTERS_ALPHABET) + 'a'));
+        }
+
+        for (int i = 0; i < NUMBER_OF_CAPITAL_LETTERS_IN_PASSWORD; i++) {
+            dataForPassword.append(String.valueOf((char) (RANDOM.nextInt(NUMBER_OF_LETTERS_ALPHABET) + 'a')).toUpperCase());
+        }
+
+        dataForPassword.append(email.charAt(0));
+
+        int randomSymbol;
+        int passwordLength = dataForPassword.length();
+
+        for (int i = 0; i < passwordLength; i++) {
+            randomSymbol = RANDOM.nextInt(dataForPassword.length());
+            password.append(dataForPassword.charAt(randomSymbol));
+            dataForPassword.deleteCharAt(randomSymbol);
+        }
+
         return password.toString();
     }
 }
