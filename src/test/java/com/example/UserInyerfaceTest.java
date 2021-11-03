@@ -11,8 +11,7 @@ import static org.testng.Assert.assertTrue;
 
 public class UserInyerfaceTest extends BaseTest {
     private static final String PATH_PHOTO = TEST_DATA_FILE.getValue("/photo").toString();
-    private static final int NUMBER_SELECT_ALL =
-            Integer.parseInt(TEST_DATA_FILE.getValue("/numberSelectAll").toString());
+    private static final String TEXT_SELECT_ALL = TEST_DATA_FILE.getValue("/textSelectAll").toString();
     private static final int NUMBER_INTERESTS_FOR_SELECTION =
             Integer.parseInt(TEST_DATA_FILE.getValue("/numberOfInterestsForSelection").toString());
     private static final String EMAIL = TEST_DATA_FILE.getValue("/email").toString();
@@ -33,7 +32,7 @@ public class UserInyerfaceTest extends BaseTest {
         assertEquals(formOfRegistration.getTextWithLoginForm(), TEST_DATA_FILE.getValue("/secondPage").toString(),
                 "The page with the second card did not open");
 
-        FORM_OF_SELECT_INTERESTS.choiceInterestsAndUploadPhoto(NUMBER_INTERESTS_FOR_SELECTION, PATH_PHOTO, NUMBER_SELECT_ALL);
+        FORM_OF_SELECT_INTERESTS.choiceInterestsAndUploadPhoto(NUMBER_INTERESTS_FOR_SELECTION, PATH_PHOTO, TEXT_SELECT_ALL);
         Logger.getInstance().info("Go to the third page");
         assertEquals(formOfRegistration.getTextWithLoginForm(), TEST_DATA_FILE.getValue("/thirdPage").toString(),
                 "The page with the third card did not open");

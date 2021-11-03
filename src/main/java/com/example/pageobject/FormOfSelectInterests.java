@@ -24,24 +24,34 @@ public class FormOfSelectInterests extends Form {
     private final By locatorOfListInterests =
             By.xpath("//div[@class='avatar-and-interests__interests-list__item']");
 
+    private final String locatorOfCheckBoxInterests =
+            "//div[@class='avatar-and-interests__interests-list__item'][%s]//label/span";
+
+    private final String locatorOfCheckBoxTexts =
+            "//div[@class='avatar-and-interests__interests-list__item'][%s]" +
+                    "//span[@class='checkbox small']/following-sibling::span";
+
     public FormOfSelectInterests() {
         super(By.className("start__link"), "UserInyerface");
     }
 
     public ICheckBox getCheckBox(int index) {
-        String locatorOfCheckBoxInterests = "//div[@class='avatar-and-interests__interests-list__item'][%s]//label/span";
         return getElementFactory().getCheckBox(By.xpath(
                 String.format(locatorOfCheckBoxInterests, index)), "Interests" + index);
     }
 
-    public void choiceInterests(int numberInterests, int numberSelectAll) {
+    private String getTextWithCheckBox(int index) {
+        return getElementFactory().getCheckBox(By.xpath(
+                String.format(locatorOfCheckBoxTexts, index)), "Interests" + index).getText();
+    }
+
+    public void choiceInterests(int numberInterests, String textSelectAll) {
         List<Integer> interests = new ArrayList<>();
         int numberOfAllInterestsOnPage = getElementFactory().findElements(locatorOfListInterests,
                 "ListOfInterests", TEXTBOX).size();
         unselectCheckbox(numberOfAllInterestsOnPage);
         int value = getRandomNumberFromOneToMaxValue(numberOfAllInterestsOnPage - 1);
-
-        while (value == numberSelectAll) {
+        while (getTextWithCheckBox(value).equals(textSelectAll)) {
             value = getRandomNumberFromOneToMaxValue(numberOfAllInterestsOnPage - 1);
         }
 
@@ -49,7 +59,7 @@ public class FormOfSelectInterests extends Form {
 
         while (interests.size() < numberInterests) {
             value = getRandomNumberFromOneToMaxValue(numberOfAllInterestsOnPage - 1);
-            if (!interests.contains(value) && value != numberSelectAll) {
+            if (!interests.contains(value) && !getTextWithCheckBox(value).equals(textSelectAll)) {
                 interests.add(value);
             }
         }
@@ -72,8 +82,8 @@ public class FormOfSelectInterests extends Form {
         }
     }
 
-    public void choiceInterestsAndUploadPhoto(int numberInterests, String filePath, int numberSelectAll) {
-        choiceInterests(numberInterests, numberSelectAll);
+    public void choiceInterestsAndUploadPhoto(int numberInterests, String filePath, String textSelectAll) {
+        choiceInterests(numberInterests, textSelectAll);
         uploadPhoto(filePath);
         buttonNextForThirdPage.click();
     }

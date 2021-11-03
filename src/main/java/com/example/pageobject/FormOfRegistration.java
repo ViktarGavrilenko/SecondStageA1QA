@@ -35,6 +35,8 @@ public class FormOfRegistration extends Form {
     private final ITextBox fieldTimer =
             getElementFactory().getTextBox(By.xpath("//div[contains(@class, 'timer--white')]"), "FieldTimer");
 
+    private final String locatorOfDomainEmail = "//div[@class='dropdown__list-item'][%s]";
+
     public FormOfRegistration() {
         super(By.className("start__link"), "UserInyerface");
     }
@@ -68,7 +70,6 @@ public class FormOfRegistration extends Form {
     }
 
     public ITextBox getDomainOfEmail(String email) {
-        String locatorOfDomainEmail = "//div[@class='dropdown__list-item'][%s]";
         List<ITextBox> domains =
                 getElementFactory().findElements(By.className("dropdown__list-item"), "Domains", TEXTBOX);
         for (int i = 0; i < domains.size(); i++) {
