@@ -2,10 +2,13 @@ package com.example.resourcesjson;
 
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
-import com.example.jsonmodels.Post;
-import com.example.jsonmodels.User;
+import com.example.models.Post;
+import com.example.models.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
@@ -17,9 +20,7 @@ public class JSONPlaceholder {
     private static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
     private static final String URL = CONFIG_FILE.getValue("/mainPage").toString();
     private static final String POSTS = TEST_DATA_FILE.getValue("/posts").toString();
-
     private static final String USERS = TEST_DATA_FILE.getValue("/users").toString();
-
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public List<Post> getPostsFromGETRequest() throws Exception {
@@ -45,7 +46,7 @@ public class JSONPlaceholder {
         return MAPPER.readValue(getJsonAnswer(), Post.class);
     }
 
-    public Post getAnswerFromPOSTRequest(Map<Object, Object> data) throws Exception {
+    public Post getPostFromPOSTRequest(Map<Object, Object> data) throws Exception {
         sendPost(URL + POSTS, data);
         return MAPPER.readValue(getJsonAnswer(), Post.class);
     }
@@ -59,5 +60,23 @@ public class JSONPlaceholder {
     public User getUserFromGETRequest(int numberUser) throws Exception {
         sendGet(URL + USERS + "/" + numberUser);
         return MAPPER.readValue(getJsonAnswer(), User.class);
+    }
+
+    public boolean isFieldInJSON(String jsonAnswer, String nameField) {
+        JSONObject jsonObj = new JSONObject(jsonAnswer);
+        return jsonObj.has(nameField);
+    }
+
+    public boolean isJSONValid(String jsonAnswer) {
+        try {
+            new JSONObject(jsonAnswer);
+        } catch (JSONException ex) {
+            try {
+                new JSONArray(jsonAnswer);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
     }
 }

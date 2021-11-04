@@ -1,9 +1,10 @@
 package com.example;
 
-import com.example.jsonmodels.Post;
-import com.example.jsonmodels.User;
+import aquality.selenium.core.logging.Logger;
+import aquality.selenium.core.utilities.ISettingsFile;
+import aquality.selenium.core.utilities.JsonSettingsFile;
+import com.example.models.*;
 import com.example.resourcesjson.JSONPlaceholder;
-import org.json.JSONObject;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
@@ -12,114 +13,124 @@ import java.util.Map;
 
 import static com.example.utils.APIUtils.getJsonAnswer;
 import static com.example.utils.APIUtils.getStatusCode;
+import static com.example.utils.StringUtils.generateRandomText;
 import static org.testng.Assert.*;
 
 public class JSONPlaceholderTest {
     private static final int STATUS_CODE_TWO_HUNDRED = 200;
     private static final int STATUS_CODE_TWO_HUNDRED_ONE = 201;
     private static final int STATUS_CODE_FOUR_HUNDRED_FOUR = 404;
+    private static final int POST_NINETY_NINE = 99;
+    private static final int POST_ONE_HUNDRED_FIFTY = 150;
+    private static final int FIFTH_USER = 5;
+    private static final int TENTH_USERID = 10;
 
-    @Test(description = "Тест формы JSONPlaceholderTest")
+    private static final String ID_FIELD_NAME = "id";
+    private static final String RANDOM_TITLE = generateRandomText();
+    private static final String RANDOM_BODY = generateRandomText();
+
+    private static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
+    private static final String FIFTH_NAME = TEST_DATA_FILE.getValue("/fifthName").toString();
+    private static final String FIFTH_USERNAME = TEST_DATA_FILE.getValue("/fifthUsername").toString();
+    private static final String FIFTH_EMAIL = TEST_DATA_FILE.getValue("/fifthEmail").toString();
+    private static final String FIFTH_STREET = TEST_DATA_FILE.getValue("/fifthStreet").toString();
+    private static final String FIFTH_SUITE = TEST_DATA_FILE.getValue("/fifthSuite").toString();
+    private static final String FIFTH_CITY = TEST_DATA_FILE.getValue("/fifthCity").toString();
+    private static final String FIFTH_ZIPCODE = TEST_DATA_FILE.getValue("/fifthZipcode").toString();
+    private static final String FIFTH_LAT = TEST_DATA_FILE.getValue("/fifthLat").toString();
+    private static final String FIFTH_LNG = TEST_DATA_FILE.getValue("/fifthLng").toString();
+    private static final String FIFTH_PHONE = TEST_DATA_FILE.getValue("/fifthPhone").toString();
+    private static final String FIFTH_WEBSITE = TEST_DATA_FILE.getValue("/fifthWebsite").toString();
+    private static final String FIFTH_COMPANY_NAME = TEST_DATA_FILE.getValue("/fifthCompanyName").toString();
+    private static final String FIFTH_CATCH_PHRASE = TEST_DATA_FILE.getValue("/fifthCatchPhrase").toString();
+    private static final String FIFTH_BS = TEST_DATA_FILE.getValue("/fifthBs").toString();
+
+    @Test(description = "Testing JSONPlaceholderTest")
     public void testJSONPlaceholder() throws Exception {
+
         JSONPlaceholder jsonPlaceholder = new JSONPlaceholder();
         List<Post> posts = jsonPlaceholder.getPostsFromGETRequest();
-        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED, "Status code is not 200");
+        Logger.getInstance().info("Checking status code");
+        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED, "Status code is not " + STATUS_CODE_TWO_HUNDRED);
+        Logger.getInstance().info("Checking that the list of posts is returned in JSON format");
+        assertTrue(jsonPlaceholder.isJSONValid(getJsonAnswer()), "The list of posts did not return in JSON format");
+        Logger.getInstance().info("Checking if the list is sorted in ascending order");
         assertTrue(jsonPlaceholder.isListSortedById(posts), "The list is not sorted in ascending order (by id)");
 
-        Post post = jsonPlaceholder.getPostFromGETRequest(99);
-        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED, "Status code is not 200");
-        assertEquals(post.id, 99, "id is not 99");
-        assertEquals(post.userId, 10, "userId is not 10");
-        assertFalse(post.body.isEmpty(), "Body values is empty strings");
-        assertFalse(post.title.isEmpty(), "Title values is empty strings");
+        Post post = jsonPlaceholder.getPostFromGETRequest(POST_NINETY_NINE);
+        Logger.getInstance().info("Checking status code");
+        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED, "Status code is not " + STATUS_CODE_TWO_HUNDRED);
+        Logger.getInstance().info("Checking userId");
+        assertEquals(post.userId, TENTH_USERID, "userId is not " + TENTH_USERID);
+        Logger.getInstance().info("Checking id");
+        assertEquals(post.id, POST_NINETY_NINE, "id is not " + POST_NINETY_NINE);
+        Logger.getInstance().info("Checking if body value is not empty strings");
+        assertFalse(post.body.isEmpty(), "Body value is empty strings");
+        Logger.getInstance().info("Checking if title value is not empty strings");
+        assertFalse(post.title.isEmpty(), "Title value is empty strings");
 
-        jsonPlaceholder.getPostFromGETRequest(150);
-        assertEquals(getStatusCode(), STATUS_CODE_FOUR_HUNDRED_FOUR, "Status code is not 404");
-        assertEquals(getJsonAnswer(), "{}", "Status code is not 404");
+        jsonPlaceholder.getPostFromGETRequest(POST_ONE_HUNDRED_FIFTY);
+        Logger.getInstance().info("Checking status code");
+        assertEquals(getStatusCode(), STATUS_CODE_FOUR_HUNDRED_FOUR,
+                "Status code is not " + STATUS_CODE_FOUR_HUNDRED_FOUR);
+        Logger.getInstance().info("Checking status code");
+        assertEquals(getJsonAnswer(), "{}", "Response body is not empty");
 
         Map<Object, Object> data = new HashMap<>();
-        data.put("title", "abc");
-        data.put("body", "123");
-        data.put("userId", "1");
+        data.put("title", RANDOM_TITLE);
+        data.put("body", RANDOM_BODY);
+        data.put("userId", 1);
 
-        post = jsonPlaceholder.getAnswerFromPOSTRequest(data);
-        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED_ONE, "Status code is not 201");
-        JSONObject jsonObj = new JSONObject(getJsonAnswer());
-        assertTrue(jsonObj.has("id"), "id is not present in response");
-        assertEquals(post.userId, 1, "userId is not 1");
-        assertEquals(post.body, "123", "The body value does not match those given in the request");
-        assertEquals(post.title, "abc", "The title value does not match those given in the request");
+        Post expectedPost = new Post();
+        expectedPost.userId = 1;
+        expectedPost.body = RANDOM_BODY;
+        expectedPost.title = RANDOM_TITLE;
 
-        List<User> usersList = jsonPlaceholder.getUsersFromGETRequest();
-        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED, "Status code is not 200");
-        assertEquals(usersList.get(4).name, "Chelsey Dietrich", "Name is not Chelsey Dietrich");
-        assertEquals(usersList.get(4).username, "Kamren", "Username is not Kamren");
-        assertEquals(usersList.get(4).email, "Lucio_Hettinger@annie.ca",
-                "Email is not \"Lucio_Hettinger@annie.ca\"");
-        assertEquals(usersList.get(4).address.street, "Skiles Walks", "Street is not \"Skiles Walks\"");
-        assertEquals(usersList.get(4).address.suite, "Suite 351", "Suite is not \"Suite 351\"");
-        assertEquals(usersList.get(4).address.city, "Roscoeview", "City is not Roscoeview");
-        assertEquals(usersList.get(4).address.zipcode, "33263", "Zipcode is not 33263");
-        assertEquals(usersList.get(4).address.geo.lat, "-31.8129", "Lat is not -31.8129");
-        assertEquals(usersList.get(4).address.geo.lng, "62.5342", "Lng is not 62.5342");
-        assertEquals(usersList.get(4).phone, "(254)954-1289", "Phone is not (254)954-1289");
-        assertEquals(usersList.get(4).website, "demarco.info", "Website is not \"demarco.info\"");
-        assertEquals(usersList.get(4).company.name, "Keebler LLC", "Name company is not \"Keebler LLC\"");
-        assertEquals(usersList.get(4).company.catchPhrase, "User-centric fault-tolerant solution",
-                "catchPhrase is not \"User-centric fault-tolerant solution\"");
-        assertEquals(usersList.get(4).company.bs, "revolutionize end-to-end systems",
-                "bs company is not \"revolutionize end-to-end systems\"");
+        post = jsonPlaceholder.getPostFromPOSTRequest(data);
+        Logger.getInstance().info("Checking status code");
+        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED_ONE,
+                "Status code is not " + STATUS_CODE_TWO_HUNDRED_ONE);
+        Logger.getInstance().info("Checking if id is present in response");
+        assertTrue(jsonPlaceholder.isFieldInJSON(getJsonAnswer(), ID_FIELD_NAME),
+                ID_FIELD_NAME + " is not present in response");
+        Logger.getInstance().info("Checking post data");
+        assertEquals(post, expectedPost, "The posts has incorrect data");
 
-        User user = jsonPlaceholder.getUserFromGETRequest(5);
-        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED, "Status code is not 200");
-        assertEquals(user.name, "Chelsey Dietrich", "Name is not Chelsey Dietrich");
-        assertEquals(user.username, "Kamren", "Username is not Kamren");
-        assertEquals(user.email, "Lucio_Hettinger@annie.ca",
-                "Email is not \"Lucio_Hettinger@annie.ca\"");
-        assertEquals(user.address.street, "Skiles Walks", "Street is not \"Skiles Walks\"");
-        assertEquals(user.address.suite, "Suite 351", "Suite is not \"Suite 351\"");
-        assertEquals(user.address.city, "Roscoeview", "City is not Roscoeview");
-        assertEquals(user.address.zipcode, "33263", "Zipcode is not 33263");
-        assertEquals(user.address.geo.lat, "-31.8129", "Lat is not -31.8129");
-        assertEquals(user.address.geo.lng, "62.5342", "Lng is not 62.5342");
-        assertEquals(user.phone, "(254)954-1289", "Phone is not (254)954-1289");
-        assertEquals(user.website, "demarco.info", "Website is not \"demarco.info\"");
-        assertEquals(user.company.name, "Keebler LLC", "Name company is not \"Keebler LLC\"");
-        assertEquals(user.company.catchPhrase, "User-centric fault-tolerant solution",
-                "catchPhrase is not \"User-centric fault-tolerant solution\"");
-        assertEquals(user.company.bs, "revolutionize end-to-end systems",
-                "bs company is not \"revolutionize end-to-end systems\"");
-
-/*
         User fifthUser = new User();
         Address fifthAddress = new Address();
         Geo fifthGeo = new Geo();
         Company fifthCompany = new Company();
 
-        fifthUser.name = "Chelsey Dietrich";
-        fifthUser.username = "Kamren";
-        fifthUser.email = "Lucio_Hettinger@annie.ca";
-
-        fifthAddress.street = "Skiles Walks";
-        fifthAddress.suite = "Suite 351";
-        fifthAddress.city = "Roscoeview";
-        fifthAddress.zipcode = "33263";
-
-        fifthGeo.lat = "-31.8129";
-        fifthGeo.lng = "62.5342";
+        fifthUser.name = FIFTH_NAME;
+        fifthUser.username = FIFTH_USERNAME;
+        fifthUser.email = FIFTH_EMAIL;
+        fifthAddress.street = FIFTH_STREET;
+        fifthAddress.suite = FIFTH_SUITE;
+        fifthAddress.city = FIFTH_CITY;
+        fifthAddress.zipcode = FIFTH_ZIPCODE;
+        fifthGeo.lat = FIFTH_LAT;
+        fifthGeo.lng = FIFTH_LNG;
         fifthAddress.geo = fifthGeo;
         fifthUser.address = fifthAddress;
-
-        fifthUser.phone = "(254)954-1289";
-        fifthUser.website = "demarco.info";
-        fifthCompany.name = "Keebler LLC";
-        fifthCompany.catchPhrase = "User-centric fault-tolerant solution";
-        fifthCompany.bs = "revolutionize end-to-end systems";
-
+        fifthUser.phone = FIFTH_PHONE;
+        fifthUser.website = FIFTH_WEBSITE;
+        fifthCompany.name = FIFTH_COMPANY_NAME;
+        fifthCompany.catchPhrase = FIFTH_CATCH_PHRASE;
+        fifthCompany.bs = FIFTH_BS;
         fifthUser.company = fifthCompany;
 
-        assertEquals(usersList.get(4), fifthUser, "The fifth user has incorrect data");
-*/
+        List<User> usersList = jsonPlaceholder.getUsersFromGETRequest();
+        Logger.getInstance().info("Checking status code");
+        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED, "Status code is not " + STATUS_CODE_TWO_HUNDRED);
+        Logger.getInstance().info("Checking that the list of users is returned in JSON format");
+        assertTrue(jsonPlaceholder.isJSONValid(getJsonAnswer()), "The list of users did not return in JSON format");
+        Logger.getInstance().info("Checking user data with id " + FIFTH_USER);
+        assertEquals(usersList.get(FIFTH_USER - 1), fifthUser, "The user has incorrect data");
+
+        User user = jsonPlaceholder.getUserFromGETRequest(FIFTH_USER);
+        Logger.getInstance().info("Checking status code");
+        assertEquals(getStatusCode(), STATUS_CODE_TWO_HUNDRED, "Status code is not " + STATUS_CODE_TWO_HUNDRED);
+        Logger.getInstance().info("Checking user data");
+        assertEquals(user, fifthUser, "The user has incorrect data");
     }
 }
-
