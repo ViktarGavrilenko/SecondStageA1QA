@@ -5,6 +5,7 @@ import aquality.selenium.core.logging.Logger;
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
 import com.example.pageobject.FormOfRegistration;
+import org.openqa.selenium.Dimension;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -15,11 +16,12 @@ public class BaseTest {
     protected static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
     protected static final String DEFAULT_URL = CONFIG_FILE.getValue("/mainPage").toString();
     protected static FormOfRegistration formOfRegistration = new FormOfRegistration();
+    protected final Dimension defaultSize = new Dimension(1280, 1024);
 
     @BeforeMethod
     protected void beforeMethod() {
         getBrowser().goTo(DEFAULT_URL);
-        getBrowser().maximize();
+        getBrowser().setWindowSize(defaultSize.width, defaultSize.height);
         Logger.getInstance().info("Check if the page is loaded " + DEFAULT_URL);
     }
 
