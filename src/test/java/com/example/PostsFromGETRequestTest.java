@@ -5,11 +5,12 @@ import com.example.models.Post;
 import org.apache.hc.core5.http.HttpStatus;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.resourcesjson.JSONPlaceholder.getPostsFromRequest;
 import static com.example.utils.APIUtils.sendGet;
-import static com.example.utils.CollectionUtils.isListSortedById;
 import static com.example.utils.JsonUtils.isJSONValid;
 
 public class PostsFromGETRequestTest extends BaseTest {
@@ -23,7 +24,12 @@ public class PostsFromGETRequestTest extends BaseTest {
         Logger.getInstance().info("Checking that the list of posts is returned in JSON format");
         assertTrue(isJSONValid(response.body()), "The list of posts did not return in JSON format");
 
+        List<Integer> idList = new ArrayList<>();
+        for (Post value : posts) {
+            idList.add(value.id);
+        }
+        boolean isSortList = idList.stream().sorted().collect(Collectors.toList()).equals(idList);
         Logger.getInstance().info("Checking if the list is sorted in ascending order");
-        assertTrue(isListSortedById(posts), "The list is not sorted in ascending order (by id)");
+        assertTrue(isSortList, "The list is not sorted in ascending order (by id)");
     }
 }
