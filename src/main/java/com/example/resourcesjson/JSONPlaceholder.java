@@ -17,18 +17,16 @@ public class JSONPlaceholder {
             return MAPPER.readValue(response.body(), new TypeReference<List<Post>>() {
             });
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("Could not deserialize: ", e);
         }
-        return null;
     }
 
     public static Post getPostFromRequest(HttpResponse<String> response) {
         try {
             return MAPPER.readValue(response.body(), Post.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("Could not deserialize: ", e);
         }
-        return null;
     }
 
     public static List<User> getUsersFromRequest(HttpResponse<String> response) {
@@ -36,17 +34,15 @@ public class JSONPlaceholder {
             return MAPPER.readValue(response.body(), new TypeReference<List<User>>() {
             });
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("Could not deserialize: ", e);
         }
-        return null;
     }
 
     public static User getUserFromRequest(HttpResponse<String> response) {
         try {
             return MAPPER.readValue(response.body(), User.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("Could not deserialize: ", e);
         }
-        return null;
     }
 }

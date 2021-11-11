@@ -34,8 +34,7 @@ public class JsonUtils {
         try {
             return mapper.readValue(is, User.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("Could not deserialize: ", e);
         }
-        return null;
     }
 }

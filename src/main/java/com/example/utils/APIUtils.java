@@ -23,9 +23,8 @@ public class APIUtils {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("The request argument is not a request  ", e);
         }
-        return null;
     }
 
     public static HttpResponse<String> sendPost(String url, Map<Object, Object> data) {
@@ -39,9 +38,8 @@ public class APIUtils {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("The request argument is not a request  ", e);
         }
-        return null;
     }
 
     private static HttpRequest.BodyPublisher buildFormDataFromMap(Map<Object, Object> data) {
