@@ -18,10 +18,10 @@ public class Geo {
         Geo geo = (Geo) obj;
 
         if (!lat.equals(geo.lat)) {
-            Logger.getInstance().error("Latitudes are not equal");
+            Logger.getInstance().error("Compared latitudes " + lat + " and " + geo.lat + " are not equal");
         }
         if (!lng.equals(geo.lng)) {
-            Logger.getInstance().error("longitudes are not equal");
+            Logger.getInstance().error("Compared longitudes " + lng + " and " + geo.lng + " are not equal");
         }
 
         return lat.equals(geo.lat) && lng.equals(geo.lng);

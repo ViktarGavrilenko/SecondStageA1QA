@@ -24,22 +24,22 @@ public class User {
         User user = (User) obj;
 
         if (!name.equals(user.name)) {
-            Logger.getInstance().error("Names are not equal");
+            Logger.getInstance().error("Compared names " + name + " and " + user.name + " are not equal");
         }
         if (!username.equals(user.username)) {
-            Logger.getInstance().error("Usernames are not equal");
+            Logger.getInstance().error("Compared usernames " + username + " and " + user.username + " are not equal");
         }
         if (!email.equals(user.email)) {
-            Logger.getInstance().error("Emails are not equal");
+            Logger.getInstance().error("Compared emails " + email + " and " + user.email + " are not equal");
         }
         if (!address.equals(user.address)) {
             Logger.getInstance().error("Addresses are not equal");
         }
         if (!phone.equals(user.phone)) {
-            Logger.getInstance().error("Phones are not equal");
+            Logger.getInstance().error("Compared phones " + phone + " and " + user.phone + " are not equal");
         }
         if (!website.equals(user.website)) {
-            Logger.getInstance().error("Websites are not equal");
+            Logger.getInstance().error("Compared websites " + website + " and " + user.website + " are not equal");
         }
         if (!company.equals(user.company)) {
             Logger.getInstance().error("Companies are not equal");

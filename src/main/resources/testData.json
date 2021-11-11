@@ -1,19 +1,5 @@
 {
   "posts": "posts",
-  "users": "users",
-  "fifthName": "Chelsey Dietrich",
-  "fifthUsername": "Kamren",
-  "fifthEmail": "Lucio_Hettinger@annie.ca",
-  "fifthStreet": "Skiles Walks",
-  "fifthSuite": "Suite 351",
-  "fifthCity": "Roscoeview",
-  "fifthZipcode": "33263",
-  "fifthLat": "-31.8129",
-  "fifthLng": "62.5342",
-  "fifthPhone": "(254)954-1289",
-  "fifthWebsite": "demarco.info",
-  "fifthCompanyName": "Keebler LLC",
-  "fifthCatchPhrase": "User-centric fault-tolerant solution",
-  "fifthBs": "revolutionize end-to-end systems"
+  "users": "users"
 }
 

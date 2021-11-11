@@ -19,13 +19,14 @@ public class Company {
         Company company = (Company) obj;
 
         if (!name.equals(company.name)) {
-            Logger.getInstance().error("Names are not equal");
+            Logger.getInstance().error("Compared company names " + name + " and " + company.name + " are not equal");
         }
         if (!catchPhrase.equals(company.catchPhrase)) {
-            Logger.getInstance().error("CatchPhrases are not equal");
+            Logger.getInstance().error("Compared company catchPhrases " + catchPhrase + " and " + company.catchPhrase +
+                    " are not equal");
         }
         if (!bs.equals(company.bs)) {
-            Logger.getInstance().error("Bs are not equal");
+            Logger.getInstance().error("Compared company bs " + bs + " and " + company.bs + " are not equal");
         }
 
         return name.equals(company.name) && catchPhrase.equals(company.catchPhrase) && bs.equals(company.bs);

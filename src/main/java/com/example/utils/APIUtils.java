@@ -1,5 +1,6 @@
 package com.example.utils;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -11,31 +12,23 @@ import java.util.Map;
 public class APIUtils {
 
     private static final HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
-    private static int statusCode;
 
-    public static int getStatusCode() {
-        return statusCode;
-    }
-
-    private static String jsonAnswer;
-
-    public static String getJsonAnswer() {
-        return jsonAnswer;
-    }
-
-    public static void sendGet(String url) throws Exception {
+    public static HttpResponse<String> sendGet(String url) {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(url))
                 .setHeader("User-Agent", "HttpClient")
                 .build();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        statusCode = response.statusCode();
-        jsonAnswer = response.body();
+        try {
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static void sendPost(String url, Map<Object, Object> data) throws Exception {
+    public static HttpResponse<String> sendPost(String url, Map<Object, Object> data) {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(buildFormDataFromMap(data))
                 .uri(URI.create(url))
@@ -43,9 +36,12 @@ public class APIUtils {
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .build();
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        statusCode = response.statusCode();
-        jsonAnswer = response.body();
+        try {
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static HttpRequest.BodyPublisher buildFormDataFromMap(Map<Object, Object> data) {
