@@ -20,13 +20,13 @@ public class Post {
         Post post = (Post) obj;
 
         if (userId != post.userId) {
-            Logger.getInstance().error("Compared userIdes " + userId + " and " + post.userId + " are not equal");
+            Logger.getInstance().error(String.format("Compared userIdes %s and %s are not equal", userId, post.userId));
         }
         if (!title.equals(post.title)) {
-            Logger.getInstance().error("Compared titles " + title + " and " + post.title + " are not equal");
+            Logger.getInstance().error(String.format("Compared titles %s and %s are not equal", title, post.title));
         }
         if (!body.equals(post.body)) {
-            Logger.getInstance().error("Compared bodies " + body + " and " + post.body + " are not equal");
+            Logger.getInstance().error(String.format("Compared bodies %s and %s are not equal", body, post.body));
         }
 
         return userId == post.userId && title.equals(post.title) && body.equals(post.body);

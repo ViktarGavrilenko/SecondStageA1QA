@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.resourcesjson.JSONPlaceholder.getPostFromRequest;
+import static com.example.apiresponses.ProcessingApiResponses.getPost;
 import static com.example.utils.APIUtils.sendPost;
 import static com.example.utils.JsonUtils.isFieldInJSON;
 import static com.example.utils.StringUtils.generateRandomText;
@@ -31,7 +31,7 @@ public class PostFromPOSTRequestTest extends BaseTest {
         expectedPost.title = RANDOM_TITLE;
 
         response = sendPost(String.valueOf(url.append(MAIN_URL).append(POSTS)), data);
-        post = getPostFromRequest(response);
+        post = getPost(response);
         Logger.getInstance().info("Checking status code");
         assertEquals(response.statusCode(), HttpStatus.SC_CREATED,
                 "Status code is not " + HttpStatus.SC_CREATED);

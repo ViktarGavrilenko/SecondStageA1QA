@@ -1,4 +1,4 @@
-package com.example.resourcesjson;
+package com.example.apiresponses;
 
 import com.example.models.Post;
 import com.example.models.User;
@@ -9,10 +9,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.http.HttpResponse;
 import java.util.List;
 
-public class JSONPlaceholder {
+public class ProcessingApiResponses {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public static List<Post> getPostsFromRequest(HttpResponse<String> response) {
+    public static List<Post> getPosts(HttpResponse<String> response) {
         try {
             return MAPPER.readValue(response.body(), new TypeReference<List<Post>>() {
             });
@@ -21,7 +21,7 @@ public class JSONPlaceholder {
         }
     }
 
-    public static Post getPostFromRequest(HttpResponse<String> response) {
+    public static Post getPost(HttpResponse<String> response) {
         try {
             return MAPPER.readValue(response.body(), Post.class);
         } catch (JsonProcessingException e) {
@@ -29,7 +29,7 @@ public class JSONPlaceholder {
         }
     }
 
-    public static List<User> getUsersFromRequest(HttpResponse<String> response) {
+    public static List<User> getUsers(HttpResponse<String> response) {
         try {
             return MAPPER.readValue(response.body(), new TypeReference<List<User>>() {
             });
@@ -38,7 +38,7 @@ public class JSONPlaceholder {
         }
     }
 
-    public static User getUserFromRequest(HttpResponse<String> response) {
+    public static User getUser(HttpResponse<String> response) {
         try {
             return MAPPER.readValue(response.body(), User.class);
         } catch (JsonProcessingException e) {

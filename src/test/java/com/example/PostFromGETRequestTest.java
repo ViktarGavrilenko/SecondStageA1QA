@@ -4,7 +4,7 @@ import aquality.selenium.core.logging.Logger;
 import org.apache.hc.core5.http.HttpStatus;
 import org.testng.annotations.Test;
 
-import static com.example.resourcesjson.JSONPlaceholder.getPostFromRequest;
+import static com.example.apiresponses.ProcessingApiResponses.getPost;
 import static com.example.utils.APIUtils.sendGet;
 
 public class PostFromGETRequestTest extends BaseTest {
@@ -12,7 +12,7 @@ public class PostFromGETRequestTest extends BaseTest {
     @Test(description = "Testing PostFromGETRequestTest")
     public void testPostFromGETRequest() {
         response = sendGet(String.valueOf(url.append(MAIN_URL).append(POSTS).append("/").append(POST_NINETY_NINE)));
-        post = getPostFromRequest(response);
+        post = getPost(response);
         Logger.getInstance().info("Checking status code " + MAIN_URL);
         assertEquals(response.statusCode(), HttpStatus.SC_OK, "Status code is not " + HttpStatus.SC_OK);
 

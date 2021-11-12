@@ -21,16 +21,16 @@ public class Address {
         Address address = (Address) obj;
 
         if (!street.equals(address.street)) {
-            Logger.getInstance().error("Compared streets " + street + " and " + address.street + " are not equal");
+            Logger.getInstance().error(String.format("Compared streets %s and %s are not equal", street, address.street));
         }
         if (!suite.equals(address.suite)) {
-            Logger.getInstance().error("Compared suites " + suite + " and " + address.suite + " are not equal");
+            Logger.getInstance().error(String.format("Compared suites %s and %s are not equal", suite, address.suite));
         }
         if (!city.equals(address.city)) {
-            Logger.getInstance().error("Compared cities " + city + " and " + address.city + " are not equal");
+            Logger.getInstance().error(String.format("Compared cities %s and %s are not equal", city, address.city));
         }
         if (!zipcode.equals(address.zipcode)) {
-            Logger.getInstance().error("Compared zipcodes " + zipcode + " and " + address.zipcode + " are not equal");
+            Logger.getInstance().error(String.format("Compared zipcodes %s and %s are not equal", zipcode, address.zipcode));
         }
         if (!geo.equals(address.geo)) {
             Logger.getInstance().error("Geos are not equal");

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.resourcesjson.JSONPlaceholder.getPostsFromRequest;
+import static com.example.apiresponses.ProcessingApiResponses.getPosts;
 import static com.example.utils.APIUtils.sendGet;
 import static com.example.utils.JsonUtils.isJSONValid;
 
@@ -17,7 +17,7 @@ public class PostsFromGETRequestTest extends BaseTest {
     @Test(description = "Testing PostsFromGETRequestTest")
     public void testPostsFromGETRequest() {
         response = sendGet(String.valueOf(url.append(MAIN_URL).append(POSTS)));
-        List<Post> posts = getPostsFromRequest(response);
+        List<Post> posts = getPosts(response);
         Logger.getInstance().info("Checking status code");
         assertEquals(response.statusCode(), HttpStatus.SC_OK, "Status code is not " + HttpStatus.SC_OK);
 
