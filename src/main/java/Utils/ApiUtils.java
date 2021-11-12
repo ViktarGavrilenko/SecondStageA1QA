@@ -20,7 +20,6 @@ public class ApiUtils {
                 .build();
 
         try {
-            HttpResponse<String> str = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
             throw new IllegalArgumentException("The request argument is not a request  ", e);

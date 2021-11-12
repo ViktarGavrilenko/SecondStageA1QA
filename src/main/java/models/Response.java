@@ -1,5 +1,5 @@
 package models;
 
 public class Response {
-    public int post_id;
+    public String post_id;
 }
