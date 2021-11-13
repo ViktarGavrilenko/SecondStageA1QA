@@ -37,4 +37,10 @@ public class JsonUtils {
             throw new IllegalArgumentException("Could not deserialize: ", e);
         }
     }
+    public static void isStatusCodeCorrect(int expectedStatus, int receivedStatus){
+        if (receivedStatus != expectedStatus) {
+            throw new IllegalArgumentException(String.format("The received code %s is not equal to the expected %s",
+                    receivedStatus, expectedStatus));
+        }
+    }
 }

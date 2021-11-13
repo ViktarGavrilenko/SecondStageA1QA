@@ -8,6 +8,10 @@ public class Post {
     public String title;
     public String body;
 
+    public int getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
