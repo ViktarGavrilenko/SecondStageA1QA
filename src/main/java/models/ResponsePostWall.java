@@ -1,5 +1,5 @@
 package models;
 
-public class Response {
+public class ResponsePostWall {
     public String post_id;
 }

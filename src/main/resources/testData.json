@@ -1,10 +1,12 @@
 {
   "login": "+375291660762",
   "password": "PuV6j_.2&$m9h?UYY",
-  "token": "1f5d2fbb698f73265b03de80a77703bfce8db84a229058589141955e518b99c050ef356f7bcd1295a4b17",
+  "token": "e1e44df14b6e4ae6f4c9a22935344b6a6d1c0040adc017f63034eee6eed9e7207f3460db13583dbae9959",
   "startApiVk": "https://api.vk.com/method/",
-  "wallPost": "https://api.vk.com/method/wall.post?message=%D0%93%D0%B0%D1%80%D0%B0%D0%B6&v=5.131&access_token=1f5d2fbb698f73265b03de80a77703bfce8db84a229058589141955e518b99c050ef356f7bcd1295a4b17",
+  "wallPost": "https://api.vk.com/method/wall.post?message=%D0%93%D0%B0%D1%80%D0%B0%D0%B6&v=5.131&access_token=e1e44df14b6e4ae6f4c9a22935344b6a6d1c0040adc017f63034eee6eed9e7207f3460db13583dbae9959",
   "v": "5.131",
   "idUser": "627657327",
-  "nameUser": "Иван Иванов"
+  "photo": "\\src\\main\\resources\\photo.jpg",
+  "nameUser": "Иван Иванов",
+  "idPhoto": "457243572"
 }

@@ -27,11 +27,14 @@ public class ApiUtils {
     }
 
     public static HttpResponse<String> sendPost(String url, Map<Object, Object> data) {
+        String boundary = "-------------oiawn4tp89n4e9p5";
+
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(buildFormDataFromMap(data))
                 .uri(URI.create(url))
                 .setHeader("User-Agent", "HttpClient")
-                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Content-Type",
+                        "multipart/form-data; boundary=" + boundary)
                 .build();
 
         try {
