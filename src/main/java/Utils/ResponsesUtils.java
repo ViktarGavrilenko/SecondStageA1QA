@@ -3,7 +3,10 @@ package Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.*;
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.hc.core5.http.HttpEntity;
 
+import java.io.InputStream;
 import java.net.http.HttpResponse;
 
 public class ResponsesUtils {
@@ -25,9 +28,29 @@ public class ResponsesUtils {
         }
     }
 
-    public static UploadPhoto getResponseUploadPhoto(HttpResponse<String> response) {
+    public static UploadPhoto getResponseUploadPhoto(HttpEntity entity) {
+        String res = null;
         try {
-            return MAPPER.readValue(response.body(), UploadPhoto.class);
+            InputStream instream = null;
+            instream = entity.getContent();
+
+            byte[] bytes = new byte[0];
+
+            bytes = IOUtils.toByteArray(instream);
+
+            res = new String(bytes, "UTF-8");
+
+            instream.close();
+
+            return MAPPER.readValue(res, UploadPhoto.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not deserialize: ", e);
+        }
+    }
+
+    public static Photo getResponseSavePhoto(HttpResponse<String> response) {
+        try {
+            return MAPPER.readValue(response.body(), Photo.class);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Could not deserialize: ", e);
         }

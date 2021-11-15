@@ -1,13 +1,21 @@
 package Utils;
 
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 public class ApiUtils {
     private static final HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
@@ -26,34 +34,32 @@ public class ApiUtils {
         }
     }
 
-    public static HttpResponse<String> sendPost(String url, Map<Object, Object> data) {
-        String boundary = "-------------oiawn4tp89n4e9p5";
+    public static HttpEntity sendPostNew(String url, String pathFile) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost uploadFile = new HttpPost(url);
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .POST(buildFormDataFromMap(data))
-                .uri(URI.create(url))
-                .setHeader("User-Agent", "HttpClient")
-                .header("Content-Type",
-                        "multipart/form-data; boundary=" + boundary)
-                .build();
-
+        File f = new File(pathFile);
         try {
-            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new IllegalArgumentException("The request argument is not a request  ", e);
+            builder.addBinaryBody(
+                    "photo",
+                    new FileInputStream(f),
+                    ContentType.APPLICATION_OCTET_STREAM,
+                    f.getName()
+            );
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-    }
 
-    private static HttpRequest.BodyPublisher buildFormDataFromMap(Map<Object, Object> data) {
-        var builder = new StringBuilder();
-        for (Map.Entry<Object, Object> entry : data.entrySet()) {
-            if (builder.length() > 0) {
-                builder.append("&");
-            }
-            builder.append(URLEncoder.encode(entry.getKey().toString(), StandardCharsets.UTF_8));
-            builder.append("=");
-            builder.append(URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8));
+        HttpEntity multipart = builder.build();
+        uploadFile.setEntity(multipart);
+        CloseableHttpResponse response = null;
+        try {
+            response = httpClient.execute(uploadFile);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return HttpRequest.BodyPublishers.ofString(builder.toString());
+
+        return response.getEntity();
     }
 }

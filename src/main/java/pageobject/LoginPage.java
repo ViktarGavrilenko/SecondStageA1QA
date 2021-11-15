@@ -25,15 +25,21 @@ public class LoginPage {
         return fieldPageUserName.state().isDisplayed();
     }
 
-    public void cleanAndTypePhoneOrEmail(String phoneOrEmail) {
+    private void cleanAndTypePhoneOrEmail(String phoneOrEmail) {
         fieldForPhoneOrEmail.clearAndType(phoneOrEmail);
     }
 
-    public void cleanAndTypePassword(String password) {
-        fieldForPassword.clearAndType(password);
+    private void cleanAndTypePassword(String password) {
+        fieldForPassword.clearAndTypeSecret(password);
     }
 
-    public void clickLoginButton() {
+    private void clickLoginButton() {
         loginButton.click();
+    }
+
+    public void logToVkPage(String phoneOrEmail, String password) {
+        cleanAndTypePhoneOrEmail(phoneOrEmail);
+        cleanAndTypePassword(password);
+        clickLoginButton();
     }
 }

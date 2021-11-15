@@ -4,10 +4,11 @@ import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
 import models.*;
 
-import java.util.Map;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static Utils.ApiUtils.sendGet;
-import static Utils.ApiUtils.sendPost;
+import static Utils.ApiUtils.sendPostNew;
 import static Utils.ResponsesUtils.*;
 
 public class VkApiUtils {
@@ -22,7 +23,8 @@ public class VkApiUtils {
     private static final String WALL_CREATE = "%swall.createComment?owner_id=%s&post_id=%s&message=%s%s";
     private static final String LIKES_GET_LIST = "%slikes.getList?type=post&owner_id=%s&item_id=%s%s";
     private static final String WALL_DELETE = "%swall.delete?owner_id=%s&post_id=%s%s";
-    private static final String WALL_UPLOAD_SERVER = "%sphotos.getWallUploadServer?group_id=%s%s";
+    private static final String WALL_UPLOAD_SERVER = "%sphotos.getWallUploadServer?%s";
+    private static final String SAVE_WALL_PHOTO = "%sphotos.saveWallPhoto?user_id=%s&photo=%s&server=%s&hash=%s%s";
 
 
     public static PostWall writePostOnWall(String message) {
@@ -30,32 +32,38 @@ public class VkApiUtils {
         return getResponseWall(sendGet(apiRequest));
     }
 
-    public static UploadServer getWallUploadServer(String idUser) {
-        String apiRequest = String.format(WALL_UPLOAD_SERVER, START_API_VK, idUser, VERSION_AND_TOKEN);
+    public static UploadServer getWallUploadServer() {
+        String apiRequest = String.format(WALL_UPLOAD_SERVER, START_API_VK, VERSION_AND_TOKEN);
         return getResponseUploadServer(sendGet(apiRequest));
     }
 
-    public static UploadPhoto getUploadPhoto(String idUser, Map<Object, Object> data) {
-        return getResponseUploadPhoto(sendPost(getWallUploadServer(idUser).response.upload_url, data));
+    public static UploadPhoto getUploadPhoto(String pathFile) {
+        return getResponseUploadPhoto(sendPostNew(getWallUploadServer().response.upload_url, pathFile));
     }
 
-    public static PostWall editPostOnPageAndAddPhoto(String message, String idPost, String idUser, String idPhoto) {
+    public static Photo savePhoto(int idUser, String photo, int server, String hash) {
+        String apiRequest = String.format(SAVE_WALL_PHOTO, START_API_VK, idUser,
+                URLEncoder.encode(photo, StandardCharsets.UTF_8), server, hash, VERSION_AND_TOKEN);
+        return getResponseSavePhoto(sendGet(apiRequest));
+    }
+
+    public static PostWall editPostOnPageAndAddPhoto(String message, int idPost, int idUser, int idPhoto) {
         String apiRequest =
                 String.format(WALL_EDIT, START_API_VK, message, idUser, idPost, idUser, idPhoto, VERSION_AND_TOKEN);
         return getResponseWall(sendGet(apiRequest));
     }
 
-    public static CommentOnPostOnWall createComment(String comment, String idPost, String idUser) {
+    public static CommentOnPostOnWall createComment(String comment, int idUser, int idPost) {
         String apiRequest = String.format(WALL_CREATE, START_API_VK, idUser, idPost, comment, VERSION_AND_TOKEN);
         return getResponseCommentOnPage(sendGet(apiRequest));
     }
 
-    public static LikeOnPost isLikeFromUser(String idUser, String idPost) {
+    public static LikeOnPost isLikeFromUser(int idUser, int idPost) {
         String apiRequest = String.format(LIKES_GET_LIST, START_API_VK, idUser, idPost, VERSION_AND_TOKEN);
         return getResponseLikeOnComment(sendGet(apiRequest));
     }
 
-    public static DeletePostOnWall deletePostOnWall(String idUser, String idPost) {
+    public static DeletePostOnWall deletePostOnWall(int idUser, int idPost) {
         String apiRequest = String.format(WALL_DELETE, START_API_VK, idUser, idPost, VERSION_AND_TOKEN);
         return getResponseDeletePostOnWall(sendGet(apiRequest));
     }
