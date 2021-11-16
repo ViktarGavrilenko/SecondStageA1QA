@@ -35,7 +35,6 @@ public class VkApiUtils {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final String NOT_DESERIALIZE = "Could not deserialize: ";
 
-
     public static PostWall writePostOnWall(String message) {
         String apiRequest = String.format(WALL_POST, START_API_VK, message, VERSION_AND_TOKEN);
         HttpResponse<String> response = sendGet(apiRequest);
@@ -46,7 +45,7 @@ public class VkApiUtils {
         }
     }
 
-    public static UploadServer getWallUploadServer() {
+    public static UploadServer getUrlWallUploadServer() {
         String apiRequest = String.format(WALL_UPLOAD_SERVER, START_API_VK, VERSION_AND_TOKEN);
         HttpResponse<String> response = sendGet(apiRequest);
         try {
@@ -57,7 +56,7 @@ public class VkApiUtils {
     }
 
     public static UploadPhoto getUploadPhoto(String pathFile) {
-        HttpEntity entity = sendPost(getWallUploadServer().response.upload_url, pathFile, NAME_FIELD_PHOTO);
+        HttpEntity entity = sendPost(getUrlWallUploadServer().response.upload_url, pathFile, NAME_FIELD_PHOTO);
 
         try {
             String res;
@@ -87,7 +86,7 @@ public class VkApiUtils {
         }
     }
 
-    public static void editPostOnPageAndAddPhoto(String message, int idPost, int idUser, int idPhoto) {
+    public static void editPostOnWallAndAddPhoto(String message, int idPost, int idUser, int idPhoto) {
         String apiRequest =
                 String.format(WALL_EDIT, START_API_VK, message, idUser, idPost, idUser, idPhoto, VERSION_AND_TOKEN);
         sendGet(apiRequest);

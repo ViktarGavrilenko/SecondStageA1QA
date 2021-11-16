@@ -1,7 +1,6 @@
 package pageobject;
 
 import aquality.selenium.browser.AqualityServices;
-import aquality.selenium.elements.actions.MouseActions;
 import aquality.selenium.elements.interfaces.IButton;
 import aquality.selenium.elements.interfaces.ILink;
 import aquality.selenium.elements.interfaces.ITextBox;
@@ -25,7 +24,7 @@ public class WallPage {
             "//div[@id='replies%s']//div[contains(@id, 'post%s')]//a[@data-from-id='%s']";
     private static final String LOCATOR_LIST_COMMENT = "//div[@id='replies%s']//a";
     private static final String LOCATOR_LIKE_BUTTON =
-            "//div[contains(@class, 'like_wall%s')]//div[@class='like_btns']//div";
+            "//div[contains(@class, 'like_wall%s')]//a[contains(@class, '_like')]";
 
     private static final String PART_URL_ALBUMS = "https://vk.com/albums";
     private static final String POST_ON_WALL = "PostOnWall";
@@ -48,7 +47,7 @@ public class WallPage {
         return postOnWall.getText().equals(message) && postAuthor.getHref().contains(String.valueOf(idUser));
     }
 
-    public boolean isWritingOnPageAndIsAddPhoto(String message, String idUserPost, int idUser, int idPhoto) {
+    public boolean isPostOnPageAndIsAddPhoto(String message, String idUserPost, int idUser, int idPhoto) {
         String partOfPhoto = String.format("%s_%s", idUser, idPhoto);
         ITextBox postOnWall = getElementFactory().getTextBox(By.xpath(
                 String.format(LOCATOR_POST_ON_WALL, idUserPost)), POST_ON_WALL);
@@ -85,8 +84,7 @@ public class WallPage {
     public void likePostOnWall(String idUserPost) {
         IButton likeButton = getElementFactory().getButton(
                 By.xpath(String.format(LOCATOR_LIKE_BUTTON, idUserPost)), "LikeButton");
-        MouseActions mouseActions = new MouseActions(likeButton, "LikeButton");
-        mouseActions.click();
+        likeButton.click();
     }
 
     public boolean isPostDelete(String idUserPost) {

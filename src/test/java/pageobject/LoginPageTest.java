@@ -4,7 +4,7 @@ import aquality.selenium.browser.AqualityServices;
 import aquality.selenium.core.logging.Logger;
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
-import models.Photo;
+import models.ResponsePhoto;
 import org.openqa.selenium.Dimension;
 import org.testng.annotations.Test;
 
@@ -54,11 +54,11 @@ public class LoginPageTest {
 
         Logger.getInstance().info("Changing the text and add a picture to the post");
         String newMessage = generateRandomText();
-        Photo photo = savePhoto(idUser, PATH_PHOTO);
-        editPostOnPageAndAddPhoto(newMessage, idPost, photo.response.get(0).owner_id, photo.response.get(0).id);
+        ResponsePhoto photo = savePhoto(idUser, PATH_PHOTO).response.get(0);
+        editPostOnWallAndAddPhoto(newMessage, idPost, photo.owner_id, photo.id);
 
         Logger.getInstance().info("Checking that the message text has changed and the uploaded picture has been added");
-        assertTrue(WALL_PAGE.isWritingOnPageAndIsAddPhoto(newMessage, idUserPost, idUser, photo.response.get(0).id),
+        assertTrue(WALL_PAGE.isPostOnPageAndIsAddPhoto(newMessage, idUserPost, idUser, photo.id),
                 "The record has not changed or the photo does not match the uploaded one");
 
         Logger.getInstance().info("Adding a comment to a post with random text");
