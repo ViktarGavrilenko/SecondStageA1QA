@@ -3,7 +3,6 @@ package Utils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
@@ -30,11 +29,11 @@ public class ApiUtils {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new IllegalArgumentException("The request argument is not a request  ", e);
+            throw new IllegalArgumentException("GET request error  ", e);
         }
     }
 
-    public static HttpEntity sendPostNew(String url, String pathFile) {
+    public static HttpEntity sendPost(String url, String pathFile, String nameField) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost uploadFile = new HttpPost(url);
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -42,7 +41,7 @@ public class ApiUtils {
         File f = new File(pathFile);
         try {
             builder.addBinaryBody(
-                    "photo",
+                    nameField,
                     new FileInputStream(f),
                     ContentType.APPLICATION_OCTET_STREAM,
                     f.getName()
@@ -53,13 +52,11 @@ public class ApiUtils {
 
         HttpEntity multipart = builder.build();
         uploadFile.setEntity(multipart);
-        CloseableHttpResponse response = null;
-        try {
-            response = httpClient.execute(uploadFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return response.getEntity();
+        try {
+            return httpClient.execute(uploadFile).getEntity();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("POST request error  ", e);
+        }
     }
 }

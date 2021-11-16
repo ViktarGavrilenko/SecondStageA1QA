@@ -5,79 +5,87 @@ import aquality.selenium.core.logging.Logger;
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
 import models.Photo;
-import models.UploadPhoto;
 import org.openqa.selenium.Dimension;
 import org.testng.annotations.Test;
+
+import java.util.concurrent.TimeoutException;
 
 import static Utils.StringUtils.generateRandomText;
 import static Utils.VkApiUtils.*;
 import static aquality.selenium.browser.AqualityServices.getBrowser;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 public class LoginPageTest {
-    protected static final ISettingsFile CONFIG_FILE = new JsonSettingsFile("config.json");
-    protected static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
-    protected static final String DEFAULT_URL = CONFIG_FILE.getValue("/mainPage").toString();
-    private static final String PATH_PHOTO = System.getProperty("user.dir") +
-            TEST_DATA_FILE.getValue("/photo").toString();
-
-    protected final Dimension defaultSize = new Dimension(1280, 1024);
-
+    private static final ISettingsFile CONFIG_FILE = new JsonSettingsFile("config.json");
+    private static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
+    private static final String DEFAULT_URL = CONFIG_FILE.getValue("/mainPage").toString();
     private static final String PHONE_OR_EMAIL = TEST_DATA_FILE.getValue("/login").toString();
     private static final String PASSWORD = TEST_DATA_FILE.getValue("/password").toString();
-    protected static final int ID_USER = Integer.parseInt(TEST_DATA_FILE.getValue("/idUser").toString());
-    protected static final String ID_PHOTO = TEST_DATA_FILE.getValue("/idPhoto").toString();
-    private static LoginPage loginPage = new LoginPage();
-    private static MyPage myPage = new MyPage();
+    private static final String PATH_PHOTO = System.getProperty("user.dir") +
+            TEST_DATA_FILE.getValue("/photo").toString();
+    private final Dimension defaultSize = new Dimension(1280, 1024);
+
+    private static final LoginPage LOGIN_PAGE = new LoginPage();
+    private static final WallPage WALL_PAGE = new WallPage();
 
     @Test(description = "Testing the LoginPageTest")
     public void testVkApi() {
+        Logger.getInstance().info("Go to the site " + DEFAULT_URL);
         getBrowser().goTo(DEFAULT_URL);
         getBrowser().setWindowSize(defaultSize.width, defaultSize.height);
         Logger.getInstance().info("Check if the page is loaded " + DEFAULT_URL);
-        assertTrue(loginPage.isFieldForPhoneOrEmail(), "Main page VK didn't load");
 
-        loginPage.logToVkPage(PHONE_OR_EMAIL, PASSWORD);
+        Logger.getInstance().info("Log in");
+        LOGIN_PAGE.logToVkPage(PHONE_OR_EMAIL, PASSWORD);
 
-        myPage.clickLinkMyPage();
-        assertTrue(loginPage.isFieldPageUserName(), "You did not go to your page");
+        Logger.getInstance().info("Go to \"My Page\"");
+        WALL_PAGE.clickLinkMyPage();
 
+        Logger.getInstance().info
+                ("Create a post with randomly generated text on the wall and get the post id from the response");
         String message = generateRandomText();
         int idPost = writePostOnWall(message).response.post_id;
-        String idUserPost = String.format("%s_%s", ID_USER, idPost);
 
-        assertTrue(myPage.isPostOnPage(message, idUserPost, ID_USER), "Record id not received");
+        Logger.getInstance().info
+                ("Checking if a post appeared on the wall with the correct text from the correct user");
+        int idUser = WALL_PAGE.getIdUser();
+        String idUserPost = String.format("%s_%s", idUser, idPost);
+        assertTrue(WALL_PAGE.isPostOnPage(message, idUserPost, idUser), "Record id not received");
 
-        UploadPhoto uploadPhoto = getUploadPhoto(PATH_PHOTO);
-
-        Photo photo = savePhoto(ID_USER, uploadPhoto.photo, uploadPhoto.server, uploadPhoto.hash);
-
+        Logger.getInstance().info("Changing the text and add a picture to the post");
         String newMessage = generateRandomText();
+        Photo photo = savePhoto(idUser, PATH_PHOTO);
         editPostOnPageAndAddPhoto(newMessage, idPost, photo.response.get(0).owner_id, photo.response.get(0).id);
 
-        assertTrue(myPage.isWritingOnPageAndIsAddPhoto(newMessage, idUserPost, ID_USER, photo.response.get(0).id),
+        Logger.getInstance().info("Checking that the message text has changed and the uploaded picture has been added");
+        assertTrue(WALL_PAGE.isWritingOnPageAndIsAddPhoto(newMessage, idUserPost, idUser, photo.response.get(0).id),
                 "The record has not changed or the photo does not match the uploaded one");
 
+        Logger.getInstance().info("Adding a comment to a post with random text");
         String comment = generateRandomText();
-        createComment(comment, ID_USER, idPost);
+        createComment(comment, idUser, idPost);
 
-        assertTrue(myPage.isCommentAdd(idUserPost, ID_USER), "Comment on the post on the wall was not found");
+        Logger.getInstance().info("Checking that a comment from the correct user has been added to the desired post");
+        assertTrue(WALL_PAGE.isCommentAdd(idUserPost, idUser), "Comment on the post on the wall was not found");
 
-        myPage.likePostOnWall(idUserPost);
+        Logger.getInstance().info("Leave a like to the post");
+        WALL_PAGE.likePostOnWall(idUserPost);
 
+        Logger.getInstance().info("Checking that the post has a like from the correct user");
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            AqualityServices.getConditionalWait().waitForTrue(() ->
+                            isLikeFromUser(idUser, idPost).response.items.stream().anyMatch(n -> n == idUser),
+                    "There is no like from the desired user");
+        } catch (TimeoutException e) {
+            throw new IllegalArgumentException(
+                    "There is no like from the desired user", e);
         }
 
-        assertTrue(isLikeFromUser(ID_USER, idPost).response.items.stream().anyMatch(n -> n == ID_USER),
-                "There is no like from the desired user");
+        Logger.getInstance().info("Delete the created entry");
+        deletePostOnWall(idUser, idPost);
 
-        assertEquals(deletePostOnWall(ID_USER, idPost).response, 1, "Post not deleted");
-
-        assertTrue(myPage.isPostDelete(idUserPost), "Post not deleted");
+        Logger.getInstance().info("Checking that the entry has been deleted");
+        assertTrue(WALL_PAGE.isPostDelete(idUserPost), "Post not deleted");
 
         if (AqualityServices.isBrowserStarted()) {
             getBrowser().quit();

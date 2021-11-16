@@ -7,23 +7,12 @@ import org.openqa.selenium.By;
 import static aquality.selenium.browser.AqualityServices.getElementFactory;
 
 public class LoginPage {
-
     private final ITextBox fieldForPhoneOrEmail =
             getElementFactory().getTextBox(By.id("index_email"), "FieldForPhoneOrEmail");
     private final ITextBox fieldForPassword =
             getElementFactory().getTextBox(By.id("index_pass"), "FieldForPassword");
     private final IButton loginButton =
             getElementFactory().getButton(By.id("index_login_button"), "LoginButton");
-    private final ITextBox fieldPageUserName =
-            getElementFactory().getTextBox(By.className("side_bar_nav"), "PageUserName");
-
-    public boolean isFieldForPhoneOrEmail() {
-        return fieldForPhoneOrEmail.state().isDisplayed();
-    }
-
-    public boolean isFieldPageUserName() {
-        return fieldPageUserName.state().isDisplayed();
-    }
 
     private void cleanAndTypePhoneOrEmail(String phoneOrEmail) {
         fieldForPhoneOrEmail.clearAndType(phoneOrEmail);

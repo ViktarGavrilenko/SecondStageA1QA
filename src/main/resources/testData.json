@@ -4,7 +4,5 @@
   "token": "86a38db587c0627c0d3278a43eb2789e233d14081867ced95a53d37b2d5d18b418984acb4ff647af99b95",
   "startApiVk": "https://api.vk.com/method/",
   "v": "5.131",
-  "idUser": "627657327",
-  "photo": "\\src\\main\\resources\\photo.jpg",
-  "idPhoto": "457243572"
+  "photo": "\\src\\main\\resources\\photo.jpg"
 }
