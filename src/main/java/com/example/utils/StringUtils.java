@@ -56,4 +56,9 @@ public class StringUtils {
 
         return password.toString();
     }
+
+    public static String getProjectName(){
+        String projectName = System.getProperty("user.dir");
+        return projectName.substring(projectName.lastIndexOf('\\') + 1, projectName.length());
+    }
 }

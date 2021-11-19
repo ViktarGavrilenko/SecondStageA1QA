@@ -3,6 +3,7 @@ package com.example.utils;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
+import java.util.Map;
 
 public class BrowserUtils {
     public static void uploadFile(String filePath) throws InterruptedException, AWTException {
@@ -18,5 +19,15 @@ public class BrowserUtils {
         rb.keyRelease(KeyEvent.VK_V);
         rb.keyPress(KeyEvent.VK_ENTER);
         rb.keyRelease(KeyEvent.VK_ENTER);
+    }
+
+    public static String getComputerName() {
+        Map<String, String> env = System.getenv();
+        if (env.containsKey("COMPUTERNAME"))
+            return env.get("COMPUTERNAME");
+        else if (env.containsKey("HOSTNAME"))
+            return env.get("HOSTNAME");
+        else
+            return "Unknown Computer";
     }
 }
