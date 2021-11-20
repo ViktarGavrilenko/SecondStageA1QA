@@ -1,10 +1,12 @@
 {
   "numberOfInterestsForSelection": 3,
   "textSelectAll": "Select all",
-  "photo": "c:\\1.jpg",
+  "photo": "\\src\\main\\resources\\1.jpg",
   "email": "emailaddress@mail.co.uk",
   "startTimeOfTimer": "00:00:00",
   "firstPage": "1 / 4",
   "secondPage": "2 / 4",
-  "thirdPage": "3 / 4"
+  "thirdPage": "3 / 4",
+  "login": "gavr",
+  "name": "Victor"
 }

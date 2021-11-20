@@ -24,6 +24,7 @@ public class BaseTest {
     protected static final ISettingsFile CONFIG_FILE = new JsonSettingsFile("config.json");
     protected static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
     protected static final String DEFAULT_URL = CONFIG_FILE.getValue("/mainPage").toString();
+    protected static final String AUTHOR_NAME = TEST_DATA_FILE.getValue("/name").toString();
     protected static FormOfRegistration formOfRegistration = new FormOfRegistration();
     protected final Dimension defaultSize = new Dimension(1280, 1024);
 
@@ -38,18 +39,17 @@ public class BaseTest {
     public void afterTest(ITestResult result) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        String authorId = "Victor Gavrilenko";
-
         Map<String, String> data = new HashMap<>();
         data.put("name", result.getMethod().getDescription());
         data.put("status_id", String.valueOf(result.getStatus()));
         data.put("method_name", result.getMethod().getQualifiedName());
         data.put("project_name", getProjectName());
-        data.put("session_id", "3");
+        data.put("session_key", getBrowser().getDriver().getSessionId().toString());
         data.put("start_time", formatter.format(new Date(result.getStartMillis())));
         data.put("end_time", formatter.format(new Date(result.getEndMillis())));
         data.put("env", getComputerName());
         data.put("browser", getBrowser().getBrowserName().name());
+        data.put("author_name", AUTHOR_NAME);
 
         addDataInTestTable(data);
 

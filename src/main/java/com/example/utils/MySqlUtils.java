@@ -13,6 +13,8 @@ public class MySqlUtils {
     private static final String DB_PASS = MYSQL_CONFIG_FILE.getValue("/dbPass").toString();
     private static final String DB_NAME = MYSQL_CONFIG_FILE.getValue("/dbName").toString();
 
+    private static final String SQL_QUERY_FAILED = "Sql query failed...";
+
     public static Connection getDbConnection() {
         String connectionString = String.format("jdbc:mysql://%s:%s/%s", DB_HOST, DB_PORT, DB_NAME);
         try {
@@ -53,7 +55,22 @@ public class MySqlUtils {
         try {
             return statement.executeQuery(sqlQuery);
         } catch (SQLException e) {
-            throw new IllegalArgumentException("Sql query failed...", e);
+            throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
+        }
+    }
+
+    public static int getIdAndAddIfNot(String insertStr, String selectStr) {
+        ResultSet resultSet = sendSelectQuery(selectStr);
+        try {
+            resultSet.next();
+            if (!resultSet.isFirst()) {
+                sendSqlQuery(insertStr);
+            }
+            resultSet = sendSelectQuery(selectStr);
+            resultSet.next();
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
     }
 }

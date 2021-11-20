@@ -1,5 +1,7 @@
 package com.example.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 public class StringUtils {
@@ -60,5 +62,10 @@ public class StringUtils {
     public static String getProjectName(){
         String projectName = System.getProperty("user.dir");
         return projectName.substring(projectName.lastIndexOf('\\') + 1, projectName.length());
+    }
+
+    public static String getCurrentDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format((new Date()));
     }
 }
