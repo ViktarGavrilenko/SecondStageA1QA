@@ -2,6 +2,6 @@
   "dbHost": "localhost",
   "dbPort": "3306",
   "dbUser": "root",
-  "dbPass": "956482",
+  "dbPass": "*****",
   "dbName": "union_reporting"
 }
