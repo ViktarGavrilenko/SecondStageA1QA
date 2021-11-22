@@ -2,6 +2,7 @@
   "numberOfInterestsForSelection": 3,
   "textSelectAll": "Select all",
   "photo": "\\src\\main\\resources\\1.jpg",
+  "logger": "\\target\\log\\log.log",
   "email": "emailaddress@mail.co.uk",
   "startTimeOfTimer": "00:00:00",
   "firstPage": "1 / 4",

@@ -4,26 +4,28 @@ import aquality.selenium.browser.AqualityServices;
 import aquality.selenium.core.logging.Logger;
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
-import com.example.utils.Const;
 import com.example.modelsdatabase.TestTable;
 import com.example.pageobject.FormOfRegistration;
+import com.example.utils.Const;
 import org.openqa.selenium.Dimension;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static aquality.selenium.browser.AqualityServices.getBrowser;
 import static com.example.modelsdatabase.AuthorTable.getIdAuthor;
+import static com.example.modelsdatabase.LogTable.addLog;
 import static com.example.modelsdatabase.ProjectTable.getIdProject;
 import static com.example.modelsdatabase.SessionTable.getIdSession;
-import static com.example.modelsdatabase.TestTable.addDataInTestTable;
-import static com.example.modelsdatabase.TestTable.isDataInDatabase;
 import static com.example.utils.BrowserUtils.getComputerName;
 import static com.example.utils.MySqlUtils.closeConnection;
+import static com.example.utils.StringUtils.getLogOfTest;
 import static com.example.utils.StringUtils.getProjectName;
 import static org.testng.Assert.assertTrue;
 
@@ -58,11 +60,17 @@ public class BaseTest extends Const {
         test.browser = getBrowser().getBrowserName().name();
         test.author_id = getIdAuthor(NAME_AUTHOR_PROJECT);
 
-        addDataInTestTable(test);
+        test.addDataInTestTable(test);
+        addLog(getLogOfTest(), 0, test.getMaxIdTestTable());
+        if (test.status_id != 1) {
+            StringWriter sw = new StringWriter();
+            result.getThrowable().printStackTrace(new PrintWriter(sw));
+            addLog(sw.toString(), 1, test.getMaxIdTestTable());
+        }
 
-        assertTrue(isDataInDatabase(test), "The test result was not added to the database");
+        assertTrue(test.isDataInDatabase(test), "The test result was not added to the database");
+
         closeConnection();
-
         if (AqualityServices.isBrowserStarted()) {
             getBrowser().quit();
         }

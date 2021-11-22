@@ -2,6 +2,7 @@ package com.example.modelsdatabase;
 
 import com.example.utils.Const;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -22,10 +23,11 @@ public class TestTable extends Const {
 
     private static final String INSERT_STR = "INSERT INTO  test (%s) VALUES (%s)";
     private static final String SELECT_STR = "SELECT * FROM test WHERE %s";
+    private static final String SELECT_MAX_ID = "SELECT max(id) FROM test";
 
     private static final String SQL_QUERY_FAILED = "Sql query failed...";
 
-    public static void addDataInTestTable(TestTable test) {
+    public void addDataInTestTable(TestTable test) {
         String columns = String.format("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
                 COLUMN_NAME, COLUMN_STATUS_ID, COLUMN_METHOD_NAME, COLUMN_PROJECT_ID, COLUMN_SESSION_ID,
                 COLUMN_START_TIME, COLUMN_END_TIME, COLUMN_ENV, COLUMN_BROWSER, COLUMN_AUTHOR_ID);
@@ -37,7 +39,7 @@ public class TestTable extends Const {
         sendSqlQuery(query);
     }
 
-    public static boolean isDataInDatabase(TestTable test){
+    public boolean isDataInDatabase(TestTable test){
         String partQuery = String.format("%s = '%s' AND %s = %s AND %s = '%s' AND %s = %s AND %s = %s AND %s = '%s' " +
                 "AND %s = '%s' AND %s = '%s' AND %s = '%s' AND %s = %s", COLUMN_NAME, test.name, COLUMN_STATUS_ID,
                 test.status_id, COLUMN_METHOD_NAME, test.method_name, COLUMN_PROJECT_ID, test.project_id,
@@ -47,6 +49,16 @@ public class TestTable extends Const {
 
         try {
             return sendSelectQuery(query).next();
+        } catch (SQLException e) {
+            throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
+        }
+    }
+
+    public int getMaxIdTestTable() {
+        ResultSet resultSet = sendSelectQuery(SELECT_MAX_ID);
+        try {
+            resultSet.next();
+            return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
