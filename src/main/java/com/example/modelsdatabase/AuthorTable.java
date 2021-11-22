@@ -16,11 +16,9 @@ public class AuthorTable extends Const {
 
     public static int getIdAuthor(String authorName) {
         String columns = String.format("%s, %s, %s", COLUMN_NAME, COLUMN_LOGIN, COLUMN_EMAIL);
-        String values = String.format(
-                "'%s', '%s', '%s'", authorName, LOGIN_AUTHOR, EMAIL_AUTHOR);
+        String values = String.format("'%s', '%s', '%s'", authorName, LOGIN_AUTHOR, EMAIL_AUTHOR);
         String insertQuery = String.format(INSERT_STR, columns, values);
         String selectQuery = String.format(SELECT_STR, COLUMN_ID, authorName);
         return getIdAndAddIfNot(insertQuery, selectQuery);
     }
 }
-

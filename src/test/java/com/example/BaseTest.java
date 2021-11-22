@@ -20,7 +20,7 @@ import java.util.Date;
 
 import static aquality.selenium.browser.AqualityServices.getBrowser;
 import static com.example.modelsdatabase.AuthorTable.getIdAuthor;
-import static com.example.modelsdatabase.LogTable.addLog;
+import static com.example.modelsdatabase.LogTable.addLogInTestTable;
 import static com.example.modelsdatabase.ProjectTable.getIdProject;
 import static com.example.modelsdatabase.SessionTable.getIdSession;
 import static com.example.utils.BrowserUtils.getComputerName;
@@ -61,11 +61,12 @@ public class BaseTest extends Const {
         test.author_id = getIdAuthor(NAME_AUTHOR_PROJECT);
 
         test.addDataInTestTable(test);
-        addLog(getLogOfTest(), 0, test.getMaxIdTestTable());
+
+        addLogInTestTable(getLogOfTest(), 0, test.getMaxIdTestTable());
         if (test.status_id != 1) {
             StringWriter sw = new StringWriter();
             result.getThrowable().printStackTrace(new PrintWriter(sw));
-            addLog(sw.toString(), 1, test.getMaxIdTestTable());
+            addLogInTestTable(sw.toString(), 1, test.getMaxIdTestTable());
         }
 
         assertTrue(test.isDataInDatabase(test), "The test result was not added to the database");

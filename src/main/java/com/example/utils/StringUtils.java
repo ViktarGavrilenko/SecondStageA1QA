@@ -12,14 +12,15 @@ import java.util.Random;
 
 public class StringUtils {
     protected static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
-    protected static final String LOGGER_FILE = System.getProperty("user.dir") + TEST_DATA_FILE.getValue("/logger").toString();
+    protected static final String LOGGER_FILE =
+            System.getProperty("user.dir") + TEST_DATA_FILE.getValue("/logger").toString();
     private static final Random RANDOM = new Random();
     private static final int NUMBER_OF_LETTERS_ALPHABET = 26;
     private static final int NUMBER_OF_DIGITS_IN_PASSWORD = 4;
+    private static final int NUMBER_NINE = 9;
     private static final int NUMBER_OF_CAPITAL_LETTERS_IN_PASSWORD = 3;
     private static final int NUMBER_OF_LOWERCASE_LETTERS_IN_PASSWORD = 2;
     private static final String START_STR_OF_LOGGER = "Got browser profile options from settings file:";
-
 
     public static String getFirstPartEmail(String email) {
         return email.substring(0, email.indexOf('@'));
@@ -44,7 +45,7 @@ public class StringUtils {
         StringBuilder password = new StringBuilder();
 
         for (int i = 0; i < NUMBER_OF_DIGITS_IN_PASSWORD; i++) {
-            dataForPassword.append(RANDOM.nextInt(9));
+            dataForPassword.append(RANDOM.nextInt(NUMBER_NINE));
         }
 
         for (int i = 0; i < NUMBER_OF_LOWERCASE_LETTERS_IN_PASSWORD; i++) {

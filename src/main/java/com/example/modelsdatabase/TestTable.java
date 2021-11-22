@@ -34,14 +34,13 @@ public class TestTable extends Const {
         String values = String.format("'%s', %s, '%s', %s, %s, '%s', '%s', '%s', '%s', %s",
                 test.name, test.status_id, test.method_name, test.project_id, test.session_id,
                 test.start_time, test.end_time, test.env, test.browser, test.author_id);
-
         String query = String.format(INSERT_STR, columns, values);
         sendSqlQuery(query);
     }
 
-    public boolean isDataInDatabase(TestTable test){
+    public boolean isDataInDatabase(TestTable test) {
         String partQuery = String.format("%s = '%s' AND %s = %s AND %s = '%s' AND %s = %s AND %s = %s AND %s = '%s' " +
-                "AND %s = '%s' AND %s = '%s' AND %s = '%s' AND %s = %s", COLUMN_NAME, test.name, COLUMN_STATUS_ID,
+                        "AND %s = '%s' AND %s = '%s' AND %s = '%s' AND %s = %s", COLUMN_NAME, test.name, COLUMN_STATUS_ID,
                 test.status_id, COLUMN_METHOD_NAME, test.method_name, COLUMN_PROJECT_ID, test.project_id,
                 COLUMN_SESSION_ID, test.session_id, COLUMN_START_TIME, test.start_time, COLUMN_END_TIME, test.end_time,
                 COLUMN_ENV, test.env, COLUMN_BROWSER, test.browser, COLUMN_AUTHOR_ID, test.author_id);

@@ -17,7 +17,7 @@ public class Const {
     protected static final String COLUMN_BUILD_NUMBER = "build_number";
     protected static final String COLUMN_LOGIN = "login";
     protected static final String COLUMN_EMAIL = "email";
-    protected static final String COLUMN_CONTENT= "content";
+    protected static final String COLUMN_CONTENT = "content";
     protected static final String COLUMN_IS_EXCEPTION = "is_exception";
     protected static final String COLUMN_TEST_ID = "test_id";
 }
