@@ -2,12 +2,13 @@ package com.example.modelsdatabase;
 
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
+import com.example.utils.Const;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-import static com.example.modelsdatabase.Author.getIdAuthor;
-import static com.example.modelsdatabase.Project.getIdProject;
+import static com.example.modelsdatabase.AuthorTable.getIdAuthor;
+import static com.example.modelsdatabase.ProjectTable.getIdProject;
 import static com.example.utils.ArithmeticUtils.getRandomNumberFromOneToMaxValue;
 import static com.example.utils.ArithmeticUtils.updateTime;
 import static com.example.utils.MySqlUtils.*;
@@ -15,7 +16,6 @@ import static com.example.utils.StringUtils.addSlashes;
 import static com.example.utils.StringUtils.getProjectName;
 
 public class TestTable extends Const {
-    public int id;
     public String name;
     public int status_id;
     public String method_name;
@@ -31,7 +31,6 @@ public class TestTable extends Const {
     protected static final String NAME_AUTHOR_PROJECT = TEST_DATA_FILE.getValue("/name").toString();
 
     private static final int NUMBER_OF_STATUSES = 3;
-
     private static final int NUMBER_NINE = 9;
     private static final int NUMBER_ELEVEN = 11;
     private static final String SQL_QUERY_FAILED = "Sql query failed...";
@@ -52,7 +51,7 @@ public class TestTable extends Const {
 
     public void addDataInTestTable(TestTable test) {
         String columns = String.format("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-                NAME, STATUS_ID, METHOD_NAME, PROJECT_ID, SESSION_ID, START_TIME, END_TIME, ENV, BROWSER, AUTHOR_ID);
+                COLUMN_NAME, COLUMN_STATUS_ID, COLUMN_METHOD_NAME, COLUMN_PROJECT_ID, COLUMN_SESSION_ID, COLUMN_START_TIME, COLUMN_END_TIME, COLUMN_ENV, COLUMN_BROWSER, COLUMN_AUTHOR_ID);
         String values = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
 
         String query = String.format(INSERT_STR, columns, values);
@@ -86,15 +85,15 @@ public class TestTable extends Const {
         ArrayList<Integer> id_tests = new ArrayList<>();
         try {
             while (resultSet.next()) {
-                test.name = resultSet.getString(NAME);
-                test.status_id = resultSet.getInt(STATUS_ID);
-                test.method_name = resultSet.getString(METHOD_NAME);
+                test.name = resultSet.getString(COLUMN_NAME);
+                test.status_id = resultSet.getInt(COLUMN_STATUS_ID);
+                test.method_name = resultSet.getString(COLUMN_METHOD_NAME);
                 test.project_id = getIdProject(getProjectName());
-                test.session_id = resultSet.getInt(SESSION_ID);
-                test.start_time = resultSet.getTimestamp(START_TIME);
-                test.end_time = resultSet.getTimestamp(END_TIME);
-                test.env = resultSet.getString(ENV);
-                test.browser = resultSet.getString(BROWSER);
+                test.session_id = resultSet.getInt(COLUMN_SESSION_ID);
+                test.start_time = resultSet.getTimestamp(COLUMN_START_TIME);
+                test.end_time = resultSet.getTimestamp(COLUMN_END_TIME);
+                test.env = resultSet.getString(COLUMN_ENV);
+                test.browser = resultSet.getString(COLUMN_BROWSER);
                 test.author_id = getIdAuthor(NAME_AUTHOR_PROJECT);
                 addDataInTestTable(test);
                 id_tests.add(getMaxIdTestTable());
@@ -125,12 +124,12 @@ public class TestTable extends Const {
 
         try {
             resultSet.next();
-            while (statusId == resultSet.getInt(STATUS_ID)) {
+            while (statusId == resultSet.getInt(COLUMN_STATUS_ID)) {
                 statusId = getRandomNumberFromOneToMaxValue(NUMBER_OF_STATUSES);
             }
 
-            newStartTime = updateTime(resultSet.getTimestamp(START_TIME));
-            newEndTime = updateTime(resultSet.getTimestamp(END_TIME));
+            newStartTime = updateTime(resultSet.getTimestamp(COLUMN_START_TIME));
+            newEndTime = updateTime(resultSet.getTimestamp(COLUMN_END_TIME));
 
             if (newStartTime.after(newEndTime)) {
                 Timestamp temp = newEndTime;
@@ -148,6 +147,56 @@ public class TestTable extends Const {
     public void deleteTest(int testId) {
         String query = String.format(DELETE_BY_ID, testId);
         sendSqlQuery(query);
+    }
+
+    public boolean isDataDelete(int testId) {
+        String query = String.format(SELECT_BY_ID, testId);
+        ResultSet resultSet = sendSelectQuery(query);
+        try {
+            return !resultSet.next();
+        } catch (SQLException e) {
+            throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
+        }
+    }
+
+    public TestTable getTestById(int testId) {
+        TestTable test = new TestTable();
+        String query = String.format(SELECT_BY_ID, testId);
+        ResultSet resultSet = sendSelectQuery(query);
+        try {
+            if (resultSet.next()) {
+                test.name = resultSet.getString(COLUMN_NAME);
+                test.status_id = resultSet.getInt(COLUMN_STATUS_ID);
+                test.method_name = resultSet.getString(COLUMN_METHOD_NAME);
+                test.project_id = resultSet.getInt(COLUMN_PROJECT_ID);
+                test.session_id = resultSet.getInt(COLUMN_SESSION_ID);
+                test.start_time = resultSet.getTimestamp(COLUMN_START_TIME);
+                test.end_time = resultSet.getTimestamp(COLUMN_END_TIME);
+                test.env = resultSet.getString(COLUMN_ENV);
+                test.browser = resultSet.getString(COLUMN_BROWSER);
+                test.author_id = resultSet.getInt(COLUMN_AUTHOR_ID);
+            }
+            return test;
+        } catch (SQLException e) {
+            throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        TestTable testTable = (TestTable) obj;
+        return name.equals(testTable.name) && status_id == testTable.status_id &&
+                method_name.equals(testTable.method_name) && project_id == testTable.project_id &&
+                session_id == testTable.session_id && start_time.equals(testTable.start_time) &&
+                end_time.equals(testTable.end_time) && env.equals(testTable.env) && browser.equals(testTable.browser) &&
+                author_id == testTable.author_id;
     }
 }
 

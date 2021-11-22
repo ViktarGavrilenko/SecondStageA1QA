@@ -1,5 +1,8 @@
 package com.example.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class StringUtils {
     public static String getProjectName() {
         String projectName = System.getProperty("user.dir");
@@ -8,5 +11,10 @@ public class StringUtils {
 
     public static String addSlashes(String str) {
         return str.replace("'", "\\'");
+    }
+
+    public static String getCurrentDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format((new Date()));
     }
 }

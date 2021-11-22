@@ -16,17 +16,20 @@ public class MySqlUtils {
     private static final String SQL_QUERY_FAILED = "Sql query failed...";
     private static final String CONNECTION_FAILED = "Connection failed...";
 
+    private static Connection connection;
+
     public static Connection getDbConnection() {
-        String connectionString = String.format("jdbc:mysql://%s:%s/%s", DB_HOST, DB_PORT, DB_NAME);
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            return DriverManager.getConnection(connectionString, DB_USER, DB_PASS);
-        } catch (SQLException e) {
-            throw new IllegalArgumentException(CONNECTION_FAILED, e);
+        if (connection != null) {
+            return connection;
+        } else {
+            String connectionString = String.format("jdbc:mysql://%s:%s/%s", DB_HOST, DB_PORT, DB_NAME);
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                connection = DriverManager.getConnection(connectionString, DB_USER, DB_PASS);
+                return connection;
+            } catch (ClassNotFoundException | SQLException e) {
+                throw new IllegalArgumentException(CONNECTION_FAILED, e);
+            }
         }
     }
 
@@ -63,6 +66,17 @@ public class MySqlUtils {
             return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
+        }
+    }
+
+    public static void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+                connection = null;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

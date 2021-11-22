@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Random;
 
+import static com.example.utils.StringUtils.getCurrentDate;
+
 public class ArithmeticUtils {
     private static Random random = new Random();
     private static final int HOUR_OF_DAY = 24;
@@ -14,6 +16,10 @@ public class ArithmeticUtils {
     }
 
     public static Timestamp updateTime(Timestamp time) {
+        if (time == null) {
+            time = Timestamp.valueOf(getCurrentDate());
+        }
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(time);
         cal.add(Calendar.HOUR_OF_DAY, getRandomNumberFromOneToMaxValue(HOUR_OF_DAY));
