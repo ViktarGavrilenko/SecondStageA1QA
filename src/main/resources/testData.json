@@ -1,8 +1,6 @@
 {
-  "login": "+375291660762",
-  "password": "PuV6j_.2&$m9h?UYY",
-  "token": "86a38db587c0627c0d3278a43eb2789e233d14081867ced95a53d37b2d5d18b418984acb4ff647af99b95",
-  "startApiVk": "https://api.vk.com/method/",
   "v": "5.131",
-  "photo": "\\src\\main\\resources\\photo.jpg"
+  "token": "86a38db587c0627c0d3278a43eb2789e233d14081867ced95a53d37b2d5d18b418984acb4ff647af99b95",
+  "photo": "\\src\\main\\resources\\photo.jpg",
+  "photoDownload": "\\src\\main\\resources\\photoDownload.jpg"
 }

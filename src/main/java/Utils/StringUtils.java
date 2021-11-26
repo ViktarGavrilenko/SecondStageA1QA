@@ -1,5 +1,8 @@
 package Utils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Random;
 
 public class StringUtils {
@@ -17,5 +20,17 @@ public class StringUtils {
             }
         }
         return randomText.toString();
+    }
+    public static String buildFormDataFromMap(Map<String, String> data) {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            if (builder.length() > 0) {
+                builder.append("&");
+            }
+            builder.append(entry.getKey());
+            builder.append("=");
+            builder.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
+        }
+        return builder.toString();
     }
 }
