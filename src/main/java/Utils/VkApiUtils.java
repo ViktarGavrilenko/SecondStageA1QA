@@ -1,6 +1,8 @@
 package Utils;
 
 import aquality.selenium.core.logging.Logger;
+import aquality.selenium.core.utilities.ISettingsFile;
+import aquality.selenium.core.utilities.JsonSettingsFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.DeletePostOnWall;
@@ -14,7 +16,8 @@ import static Utils.ApiUtils.sendGet;
 import static Utils.StringUtils.buildFormDataFromMap;
 
 public class VkApiUtils {
-    private static final String START_API_VK = "https://api.vk.com/method/%s?%s";
+    private static final ISettingsFile CONFIG_FILE = new JsonSettingsFile("config.json");
+    private static final String START_API_VK = CONFIG_FILE.getValue("/startApiVk").toString() + "%s?%s";
 
     private static final String WALL_POST = "wall.post";
     private static final String WALL_EDIT = "wall.edit";

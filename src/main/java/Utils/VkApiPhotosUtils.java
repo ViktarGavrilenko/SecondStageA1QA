@@ -1,6 +1,8 @@
 package Utils;
 
 import aquality.selenium.core.logging.Logger;
+import aquality.selenium.core.utilities.ISettingsFile;
+import aquality.selenium.core.utilities.JsonSettingsFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.Photo;
@@ -15,7 +17,8 @@ import static Utils.ApiUtils.*;
 import static Utils.StringUtils.buildFormDataFromMap;
 
 public class VkApiPhotosUtils {
-    private static final String START_API_VK = "https://api.vk.com/method/%s?%s";
+    private static final ISettingsFile CONFIG_FILE = new JsonSettingsFile("config.json");
+    private static final String START_API_VK = CONFIG_FILE.getValue("/startApiVk").toString() + "%s?%s";
     private static final String WALL_UPLOAD_SERVER = "photos.getWallUploadServer";
     private static final String SAVE_WALL_PHOTO = "photos.saveWallPhoto";
     private static final ObjectMapper MAPPER = new ObjectMapper();

@@ -5,7 +5,6 @@ import aquality.selenium.core.logging.Logger;
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
 import models.ResponsePhoto;
-import org.openqa.selenium.Dimension;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
@@ -13,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
+import static Utils.FileUtils.deleteFile;
 import static Utils.StringUtils.generateRandomText;
 import static Utils.VkApiPhotosUtils.savePhoto;
 import static Utils.VkApiUtils.*;
@@ -42,8 +42,6 @@ public class LoginPageTest {
     private static final String ATTACHMENTS = "attachments";
     private static final String ITEM_ID = "item_id";
 
-    private final Dimension defaultSize = new Dimension(1280, 1024);
-
     private static final LoginPage LOGIN_PAGE = new LoginPage();
     private static final WallPage WALL_PAGE = new WallPage();
 
@@ -51,7 +49,7 @@ public class LoginPageTest {
     public void testVkApi() {
         Logger.getInstance().info("Go to the site " + DEFAULT_URL);
         getBrowser().goTo(DEFAULT_URL);
-        getBrowser().setWindowSize(defaultSize.width, defaultSize.height);
+        getBrowser().maximize();
         Logger.getInstance().info("Check if the page is loaded " + DEFAULT_URL);
 
         Logger.getInstance().info("Log in");
@@ -98,6 +96,7 @@ public class LoginPageTest {
         assertTrue(WALL_PAGE.isPostUpdate(newMessage, idUserPost) &&
                         WALL_PAGE.isAddPhoto(idUserPost, PATH_PHOTO, PATH_PHOTO_DOWNLOAD),
                 "The record has not changed or the photo does not match the uploaded one");
+        deleteFile(PATH_PHOTO_DOWNLOAD);
 
         Logger.getInstance().info("Adding a comment to a post with random text");
         String comment = generateRandomText();
@@ -128,8 +127,8 @@ public class LoginPageTest {
                             isLikeFromUser(data).response.items.stream().anyMatch(n -> n == idUser),
                     "There is no like from the desired user");
         } catch (TimeoutException e) {
-            throw new IllegalArgumentException(
-                    "There is no like from the desired user", e);
+            Logger.getInstance().error("There is no like from the desired user " + e);
+            throw new IllegalArgumentException("There is no like from the desired user", e);
         }
 
         Logger.getInstance().info("Delete the created entry");
@@ -142,11 +141,6 @@ public class LoginPageTest {
 
         Logger.getInstance().info("Checking that the entry has been deleted");
         assertTrue(WALL_PAGE.isPostDelete(idUserPost), "Post not deleted");
-/*
-        File photoDownload = new File(PATH_PHOTO_DOWNLOAD);
-        File photoOriginal = new File(PATH_PHOTO);
-        assertTrue(compareImage(photoDownload, photoOriginal), "ФОТКИ НЕ ОДИНАКОВЫЕ");
-*/
     }
 
     @AfterMethod

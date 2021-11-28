@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.TimeoutException;
 
 import static Utils.PhotoUtils.compareImage;
+import static Utils.PhotoUtils.compareImageOpenCV;
 import static aquality.selenium.browser.AqualityServices.getElementFactory;
 
 public class WallPage {
@@ -89,6 +90,7 @@ public class WallPage {
             }
 
             closeButton.click();
+            compareImageOpenCV(pathDownloadPhoto, pathOriginalPhoto);
             File photoDownload = new File(pathDownloadPhoto);
             File photoOriginal = new File(pathOriginalPhoto);
             return compareImage(photoDownload, photoOriginal);
