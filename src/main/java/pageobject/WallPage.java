@@ -8,7 +8,6 @@ import aquality.selenium.elements.interfaces.ILink;
 import aquality.selenium.elements.interfaces.ITextBox;
 import org.openqa.selenium.By;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -16,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeoutException;
 
-import static Utils.PhotoUtils.compareImage;
 import static Utils.PhotoUtils.compareImageOpenCV;
 import static aquality.selenium.browser.AqualityServices.getElementFactory;
 
@@ -77,7 +75,7 @@ public class WallPage {
         return postOnWall.getText().equals(message);
     }
 
-    public boolean isAddPhoto(String idUserPost, String pathOriginalPhoto, String pathDownloadPhoto) {
+    public boolean isAddUploadedPhoto(String idUserPost, String pathOriginalPhoto, String pathDownloadPhoto) {
         ILink linkPhotoOnWall = getElementFactory().getLink(By.xpath(
                 String.format(LOCATOR_LINK_PHOTO_ON_WALL, idUserPost)), "LinkPhoto");
         try {
@@ -86,14 +84,14 @@ public class WallPage {
             linkPhotoOnWall.click();
 
             try (InputStream in = new URL(photoOnPage.getAttribute("src")).openStream()) {
+                if (Files.exists(Paths.get(pathDownloadPhoto))) {
+                    Files.delete(Paths.get(pathDownloadPhoto));
+                }
                 Files.copy(in, Paths.get(pathDownloadPhoto));
             }
 
             closeButton.click();
-            compareImageOpenCV(pathDownloadPhoto, pathOriginalPhoto);
-            File photoDownload = new File(pathDownloadPhoto);
-            File photoOriginal = new File(pathOriginalPhoto);
-            return compareImage(photoDownload, photoOriginal);
+            return compareImageOpenCV(pathDownloadPhoto, pathOriginalPhoto);
 
         } catch (IOException | TimeoutException e) {
             Logger.getInstance().error(PHOTO_NOT_UPLOAD + e);

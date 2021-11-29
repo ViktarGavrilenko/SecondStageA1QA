@@ -21,6 +21,7 @@ public class StringUtils {
         }
         return randomText.toString();
     }
+
     public static String buildFormDataFromMap(Map<String, String> data) {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> entry : data.entrySet()) {

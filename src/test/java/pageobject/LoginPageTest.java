@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import static Utils.FileUtils.deleteFile;
 import static Utils.StringUtils.generateRandomText;
 import static Utils.VkApiPhotosUtils.savePhoto;
 import static Utils.VkApiUtils.*;
@@ -66,7 +65,6 @@ public class LoginPageTest {
         data.put(MESSAGE, message);
         data.put(VERSION, VERSION_API_VK);
         data.put(ACCESS_TOKEN, TOKEN);
-
         int idPost = writePostOnWall(data).response.post_id;
 
         Logger.getInstance().info
@@ -77,12 +75,11 @@ public class LoginPageTest {
 
         Logger.getInstance().info("Changing the text and add a picture to the post");
         String newMessage = generateRandomText();
-
         data.clear();
         data.put(VERSION, VERSION_API_VK);
         data.put(ACCESS_TOKEN, TOKEN);
-
         ResponsePhoto photo = savePhoto(idUser, PATH_PHOTO, data, NAME_FIELD_PHOTO).response.get(0);
+
         data.clear();
         data.put(VERSION, VERSION_API_VK);
         data.put(ACCESS_TOKEN, TOKEN);
@@ -94,9 +91,8 @@ public class LoginPageTest {
 
         Logger.getInstance().info("Checking that the message text has changed and the uploaded picture has been added");
         assertTrue(WALL_PAGE.isPostUpdate(newMessage, idUserPost) &&
-                        WALL_PAGE.isAddPhoto(idUserPost, PATH_PHOTO, PATH_PHOTO_DOWNLOAD),
+                        WALL_PAGE.isAddUploadedPhoto(idUserPost, PATH_PHOTO, PATH_PHOTO_DOWNLOAD),
                 "The record has not changed or the photo does not match the uploaded one");
-        deleteFile(PATH_PHOTO_DOWNLOAD);
 
         Logger.getInstance().info("Adding a comment to a post with random text");
         String comment = generateRandomText();
