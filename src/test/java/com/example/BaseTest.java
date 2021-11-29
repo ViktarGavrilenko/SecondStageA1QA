@@ -35,17 +35,17 @@ public class BaseTest extends Const {
     protected static final String DEFAULT_URL = CONFIG_FILE.getValue("/mainPage").toString();
     protected static final String NAME_AUTHOR_PROJECT = TEST_DATA_FILE.getValue("/name").toString();
     protected static FormOfRegistration formOfRegistration = new FormOfRegistration();
-    protected final Dimension defaultSize = new Dimension(1280, 1024);
 
     @BeforeMethod
     protected void beforeMethod() {
         getBrowser().goTo(DEFAULT_URL);
-        getBrowser().setWindowSize(defaultSize.width, defaultSize.height);
+        getBrowser().maximize();
         Logger.getInstance().info("Check if the page is loaded " + DEFAULT_URL);
     }
 
     @AfterMethod
     public void afterTest(ITestResult result) {
+
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         TestTable test = new TestTable();
 

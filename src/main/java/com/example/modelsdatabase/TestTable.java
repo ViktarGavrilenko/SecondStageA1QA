@@ -1,5 +1,6 @@
 package com.example.modelsdatabase;
 
+import aquality.selenium.core.logging.Logger;
 import com.example.utils.Const;
 
 import java.sql.ResultSet;
@@ -49,6 +50,7 @@ public class TestTable extends Const {
         try {
             return sendSelectQuery(query).next();
         } catch (SQLException e) {
+            Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
     }
@@ -59,6 +61,7 @@ public class TestTable extends Const {
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException e) {
+            Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
     }
