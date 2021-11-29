@@ -1,5 +1,6 @@
 package com.example.modelsdatabase;
 
+import aquality.selenium.core.logging.Logger;
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
 import com.example.utils.Const;
@@ -34,6 +35,7 @@ public class TestTable extends Const {
     private static final int NUMBER_NINE = 9;
     private static final int NUMBER_ELEVEN = 11;
     private static final String SQL_QUERY_FAILED = "Sql query failed...";
+    private static final String SQL_EXCEPTION = "SQL Exception...";
 
     private static final String INSERT_STR = "INSERT INTO  test (%s) VALUES (%s)";
     private static final String SELECT_STR_SEARCH = "SELECT * FROM test WHERE id LIKE '%%%s%%' limit 10";
@@ -76,7 +78,7 @@ public class TestTable extends Const {
             statement.setInt(10, test.author_id);
             statement.execute();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getInstance().error(SQL_EXCEPTION + e);
         }
     }
 
@@ -99,6 +101,7 @@ public class TestTable extends Const {
                 id_tests.add(getMaxIdTestTable());
             }
         } catch (SQLException e) {
+            Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
         return id_tests;
@@ -110,6 +113,7 @@ public class TestTable extends Const {
             resultSet.next();
             return resultSet.getInt(1);
         } catch (SQLException e) {
+            Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
     }
@@ -137,7 +141,7 @@ public class TestTable extends Const {
                 newStartTime = temp;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getInstance().error(SQL_EXCEPTION + e);
         }
 
         query = String.format(UPDATE_BY_ID, statusId, newStartTime, newEndTime, testId);
@@ -155,6 +159,7 @@ public class TestTable extends Const {
         try {
             return !resultSet.next();
         } catch (SQLException e) {
+            Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
     }
@@ -178,6 +183,7 @@ public class TestTable extends Const {
             }
             return test;
         } catch (SQLException e) {
+            Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
     }

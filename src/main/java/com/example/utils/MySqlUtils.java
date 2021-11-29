@@ -1,5 +1,6 @@
 package com.example.utils;
 
+import aquality.selenium.core.logging.Logger;
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
 
@@ -15,6 +16,7 @@ public class MySqlUtils {
 
     private static final String SQL_QUERY_FAILED = "Sql query failed...";
     private static final String CONNECTION_FAILED = "Connection failed...";
+    private static final String SQL_EXCEPTION = "SQL Exception...";
 
     private static Connection connection;
 
@@ -28,6 +30,7 @@ public class MySqlUtils {
                 connection = DriverManager.getConnection(connectionString, DB_USER, DB_PASS);
                 return connection;
             } catch (ClassNotFoundException | SQLException e) {
+                Logger.getInstance().error(CONNECTION_FAILED + e);
                 throw new IllegalArgumentException(CONNECTION_FAILED, e);
             }
         }
@@ -40,7 +43,7 @@ public class MySqlUtils {
             statement = connection.createStatement();
             statement.executeUpdate(sqlQuery);
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getInstance().error(SQL_EXCEPTION + e);
         }
     }
 
@@ -51,6 +54,7 @@ public class MySqlUtils {
             statement = connection.createStatement();
             return statement.executeQuery(sqlQuery);
         } catch (SQLException e) {
+            Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
     }
@@ -65,6 +69,7 @@ public class MySqlUtils {
             }
             return resultSet.getInt(1);
         } catch (SQLException e) {
+            Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
     }
@@ -75,7 +80,7 @@ public class MySqlUtils {
                 connection.close();
                 connection = null;
             } catch (SQLException e) {
-                e.printStackTrace();
+                Logger.getInstance().error(SQL_EXCEPTION + e);
             }
         }
     }
