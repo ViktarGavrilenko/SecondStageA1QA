@@ -1,15 +1,16 @@
-import com.example.utils.Const;
 import com.example.modelsdatabase.TestTable;
+import com.example.utils.Const;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import static com.example.utils.MySqlUtils.closeConnection;
-import static org.testng.Assert.*;
+import static com.example.utils.TestUtils.simulateTest;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
 
 public class WorkWithTestDataTest extends Const {
     private static ArrayList<Integer> ID_TESTS = new ArrayList<>();
@@ -17,8 +18,8 @@ public class WorkWithTestDataTest extends Const {
 
     @BeforeMethod
     protected void beforeMethod() {
-        ResultSet resultSet = TEST.getListWithTwoNumbersRepeating();
-        ID_TESTS = TEST.copyDataWithNewProjectAndAuthor(resultSet);
+        ArrayList<TestTable> listTests = TEST.getListWithTwoNumbersRepeating();
+        ID_TESTS = TEST.copyDataWithNewProjectAndAuthor(listTests);
     }
 
     @Test(description = "Working with test data")
@@ -28,7 +29,7 @@ public class WorkWithTestDataTest extends Const {
             TestTable testAfter = new TestTable();
 
             testBefore = testBefore.getTestById(idTest);
-            TEST.simulateTest(idTest);
+            simulateTest(idTest);
             testAfter = testAfter.getTestById(idTest);
             assertNotEquals(testBefore, testAfter, "Information in the test has not been updated");
         }

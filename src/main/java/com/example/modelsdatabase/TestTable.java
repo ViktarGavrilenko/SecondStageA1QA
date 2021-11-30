@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import static com.example.modelsdatabase.AuthorTable.getIdAuthor;
 import static com.example.modelsdatabase.ProjectTable.getIdProject;
 import static com.example.utils.ArithmeticUtils.getRandomNumberFromOneToMaxValue;
-import static com.example.utils.ArithmeticUtils.updateTime;
 import static com.example.utils.MySqlUtils.*;
 import static com.example.utils.StringUtils.addSlashes;
 import static com.example.utils.StringUtils.getProjectName;
@@ -30,8 +29,9 @@ public class TestTable extends Const {
 
     protected static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
     protected static final String NAME_AUTHOR_PROJECT = TEST_DATA_FILE.getValue("/name").toString();
+    private static final String AUTHOR_LOGIN = TEST_DATA_FILE.getValue("/login").toString();
+    private static final String AUTHOR_EMAIL = TEST_DATA_FILE.getValue("/email").toString();
 
-    private static final int NUMBER_OF_STATUSES = 3;
     private static final int NUMBER_NINE = 9;
     private static final int NUMBER_ELEVEN = 11;
     private static final String SQL_QUERY_FAILED = "Sql query failed...";
@@ -42,18 +42,38 @@ public class TestTable extends Const {
     private static final String SELECT_MAX_ID = "SELECT max(id) FROM test";
     private static final String SELECT_BY_ID = "SELECT * FROM test WHERE id = %s";
     private static final String DELETE_BY_ID = "DELETE FROM test WHERE id = %s";
-    private static final String UPDATE_BY_ID =
-            "UPDATE test SET status_id = %s, start_time = '%s', end_time = '%s' WHERE id = %s";
 
-    public ResultSet getListWithTwoNumbersRepeating() {
+    public ArrayList<TestTable> getListWithTwoNumbersRepeating() {
         String twoNumberRepeating = String.valueOf(getRandomNumberFromOneToMaxValue(NUMBER_NINE) * NUMBER_ELEVEN);
         String query = String.format(SELECT_STR_SEARCH, twoNumberRepeating);
-        return sendSelectQuery(query);
+        ResultSet resultSet = sendSelectQuery(query);
+        ArrayList<TestTable> listTests = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                TestTable test = new TestTable();
+                test.name = resultSet.getString(COLUMN_NAME);
+                test.status_id = resultSet.getInt(COLUMN_STATUS_ID);
+                test.method_name = resultSet.getString(COLUMN_METHOD_NAME);
+                test.project_id = getIdProject(getProjectName());
+                test.session_id = resultSet.getInt(COLUMN_SESSION_ID);
+                test.start_time = resultSet.getTimestamp(COLUMN_START_TIME);
+                test.end_time = resultSet.getTimestamp(COLUMN_END_TIME);
+                test.env = resultSet.getString(COLUMN_ENV);
+                test.browser = resultSet.getString(COLUMN_BROWSER);
+                test.author_id = getIdAuthor(NAME_AUTHOR_PROJECT, AUTHOR_LOGIN, AUTHOR_EMAIL);
+                listTests.add(test);
+            }
+        } catch (SQLException e) {
+            Logger.getInstance().error(SQL_QUERY_FAILED + e);
+            throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
+        }
+        return listTests;
     }
 
     public void addDataInTestTable(TestTable test) {
         String columns = String.format("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-                COLUMN_NAME, COLUMN_STATUS_ID, COLUMN_METHOD_NAME, COLUMN_PROJECT_ID, COLUMN_SESSION_ID, COLUMN_START_TIME, COLUMN_END_TIME, COLUMN_ENV, COLUMN_BROWSER, COLUMN_AUTHOR_ID);
+                COLUMN_NAME, COLUMN_STATUS_ID, COLUMN_METHOD_NAME, COLUMN_PROJECT_ID, COLUMN_SESSION_ID,
+                COLUMN_START_TIME, COLUMN_END_TIME, COLUMN_ENV, COLUMN_BROWSER, COLUMN_AUTHOR_ID);
         String values = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
 
         String query = String.format(INSERT_STR, columns, values);
@@ -82,27 +102,11 @@ public class TestTable extends Const {
         }
     }
 
-    public ArrayList<Integer> copyDataWithNewProjectAndAuthor(ResultSet resultSet) {
-        TestTable test = new TestTable();
+    public ArrayList<Integer> copyDataWithNewProjectAndAuthor(ArrayList<TestTable> listTests) {
         ArrayList<Integer> id_tests = new ArrayList<>();
-        try {
-            while (resultSet.next()) {
-                test.name = resultSet.getString(COLUMN_NAME);
-                test.status_id = resultSet.getInt(COLUMN_STATUS_ID);
-                test.method_name = resultSet.getString(COLUMN_METHOD_NAME);
-                test.project_id = getIdProject(getProjectName());
-                test.session_id = resultSet.getInt(COLUMN_SESSION_ID);
-                test.start_time = resultSet.getTimestamp(COLUMN_START_TIME);
-                test.end_time = resultSet.getTimestamp(COLUMN_END_TIME);
-                test.env = resultSet.getString(COLUMN_ENV);
-                test.browser = resultSet.getString(COLUMN_BROWSER);
-                test.author_id = getIdAuthor(NAME_AUTHOR_PROJECT);
-                addDataInTestTable(test);
-                id_tests.add(getMaxIdTestTable());
-            }
-        } catch (SQLException e) {
-            Logger.getInstance().error(SQL_QUERY_FAILED + e);
-            throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
+        for (TestTable listTest : listTests) {
+            addDataInTestTable(listTest);
+            id_tests.add(getMaxIdTestTable());
         }
         return id_tests;
     }
@@ -116,36 +120,6 @@ public class TestTable extends Const {
             Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
-    }
-
-    public void simulateTest(int testId) {
-        String query = String.format(SELECT_BY_ID, testId);
-        ResultSet resultSet = sendSelectQuery(query);
-
-        int statusId = getRandomNumberFromOneToMaxValue(NUMBER_OF_STATUSES);
-        Timestamp newStartTime = null;
-        Timestamp newEndTime = null;
-
-        try {
-            resultSet.next();
-            while (statusId == resultSet.getInt(COLUMN_STATUS_ID)) {
-                statusId = getRandomNumberFromOneToMaxValue(NUMBER_OF_STATUSES);
-            }
-
-            newStartTime = updateTime(resultSet.getTimestamp(COLUMN_START_TIME));
-            newEndTime = updateTime(resultSet.getTimestamp(COLUMN_END_TIME));
-
-            if (newStartTime.after(newEndTime)) {
-                Timestamp temp = newEndTime;
-                newEndTime = newStartTime;
-                newStartTime = temp;
-            }
-        } catch (SQLException e) {
-            Logger.getInstance().error(SQL_EXCEPTION + e);
-        }
-
-        query = String.format(UPDATE_BY_ID, statusId, newStartTime, newEndTime, testId);
-        sendSqlQuery(query);
     }
 
     public void deleteTest(int testId) {
@@ -205,4 +179,3 @@ public class TestTable extends Const {
                 author_id == testTable.author_id;
     }
 }
-
