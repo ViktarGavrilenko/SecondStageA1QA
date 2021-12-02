@@ -5,13 +5,16 @@ import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
 import com.example.utils.Const;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import static com.example.modelsdatabase.AuthorTable.getIdAuthor;
 import static com.example.modelsdatabase.ProjectTable.getIdProject;
 import static com.example.utils.ArithmeticUtils.getRandomNumberFromOneToMaxValue;
-import static com.example.utils.MySqlUtils.*;
+import static com.example.utils.MySqlUtils.sendSelectQuery;
+import static com.example.utils.MySqlUtils.sendSqlQuery;
 import static com.example.utils.StringUtils.addSlashes;
 import static com.example.utils.StringUtils.getProjectName;
 
@@ -35,9 +38,9 @@ public class TestTable extends Const {
     private static final int NUMBER_NINE = 9;
     private static final int NUMBER_ELEVEN = 11;
     private static final String SQL_QUERY_FAILED = "Sql query failed...";
-    private static final String SQL_EXCEPTION = "SQL Exception...";
 
-    private static final String INSERT_STR = "INSERT INTO  test (%s) VALUES (%s)";
+    private static final String INSERT_STR = "INSERT INTO test (name, status_id, method_name, project_id, session_id, " +
+            "start_time, end_time, env, browser, author_id) VALUES ('%s', %s, '%s', %s, %s, '%s', %s, '%s', '%s', %s)";
     private static final String SELECT_STR_SEARCH = "SELECT * FROM test WHERE id LIKE '%%%s%%' limit 10";
     private static final String SELECT_MAX_ID = "SELECT max(id) FROM test";
     private static final String SELECT_BY_ID = "SELECT * FROM test WHERE id = %s";
@@ -71,35 +74,19 @@ public class TestTable extends Const {
     }
 
     public void addDataInTestTable(TestTable test) {
-        String columns = String.format("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-                COLUMN_NAME, COLUMN_STATUS_ID, COLUMN_METHOD_NAME, COLUMN_PROJECT_ID, COLUMN_SESSION_ID,
-                COLUMN_START_TIME, COLUMN_END_TIME, COLUMN_ENV, COLUMN_BROWSER, COLUMN_AUTHOR_ID);
-        String values = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-
-        String query = String.format(INSERT_STR, columns, values);
-
-        Connection connection = getDbConnection();
-        PreparedStatement statement;
-        try {
-            statement = connection.prepareStatement(query);
-            statement.setString(1, addSlashes(test.name));
-            if (test.status_id == 0) {
-                statement.setNull(2, Types.INTEGER);
-            } else {
-                statement.setInt(2, test.status_id);
-            }
-            statement.setString(3, test.method_name);
-            statement.setInt(4, test.project_id);
-            statement.setInt(5, test.session_id);
-            statement.setTimestamp(6, test.start_time);
-            statement.setTimestamp(7, test.end_time);
-            statement.setString(8, test.env);
-            statement.setString(9, test.browser);
-            statement.setInt(10, test.author_id);
-            statement.execute();
-        } catch (SQLException e) {
-            Logger.getInstance().error(SQL_EXCEPTION + e);
+        String statusId = "null";
+        if (test.status_id != 0) {
+            statusId = String.valueOf(test.status_id);
         }
+
+        String endTime = "null";
+        if (test.end_time != null) {
+            endTime = String.format("'%s'", test.end_time);
+        }
+
+        String query = String.format(INSERT_STR, addSlashes(test.name), statusId, test.method_name, test.project_id,
+                test.session_id, test.start_time, endTime, test.env, test.browser, test.author_id);
+        sendSqlQuery(query);
     }
 
     public ArrayList<Integer> copyDataWithNewProjectAndAuthor(ArrayList<TestTable> listTests) {

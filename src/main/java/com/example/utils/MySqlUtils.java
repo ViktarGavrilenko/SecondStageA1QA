@@ -44,6 +44,7 @@ public class MySqlUtils {
             statement.executeUpdate(sqlQuery);
         } catch (SQLException e) {
             Logger.getInstance().error(SQL_EXCEPTION + e);
+            throw new IllegalArgumentException(SQL_EXCEPTION, e);
         }
     }
 
