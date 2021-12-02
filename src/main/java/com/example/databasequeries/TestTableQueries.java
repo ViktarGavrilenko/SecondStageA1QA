@@ -1,44 +1,22 @@
-package com.example.modelsdatabase;
+package com.example.databasequeries;
 
 import aquality.selenium.core.logging.Logger;
-import aquality.selenium.core.utilities.ISettingsFile;
-import aquality.selenium.core.utilities.JsonSettingsFile;
-import com.example.utils.Const;
+import com.example.databasemodels.TestTable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import static com.example.modelsdatabase.AuthorTable.getIdAuthor;
-import static com.example.modelsdatabase.ProjectTable.getIdProject;
+import static com.example.databasequeries.AuthorTableQueries.getIdAuthor;
+import static com.example.databasequeries.ProjectTableQueries.getIdProject;
 import static com.example.utils.ArithmeticUtils.getRandomNumberFromOneToMaxValue;
+import static com.example.utils.DatabaseConst.*;
 import static com.example.utils.MySqlUtils.sendSelectQuery;
 import static com.example.utils.MySqlUtils.sendSqlQuery;
 import static com.example.utils.StringUtils.addSlashes;
 import static com.example.utils.StringUtils.getProjectName;
 
-public class TestTable extends Const {
-    public String name;
-    public int status_id;
-    public String method_name;
-    public int project_id;
-    public int session_id;
-    public Timestamp start_time;
-    public Timestamp end_time;
-    public String env;
-    public String browser;
-    public int author_id;
-
-    protected static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
-    protected static final String NAME_AUTHOR_PROJECT = TEST_DATA_FILE.getValue("/name").toString();
-    private static final String AUTHOR_LOGIN = TEST_DATA_FILE.getValue("/login").toString();
-    private static final String AUTHOR_EMAIL = TEST_DATA_FILE.getValue("/email").toString();
-
-    private static final int NUMBER_NINE = 9;
-    private static final int NUMBER_ELEVEN = 11;
-    private static final String SQL_QUERY_FAILED = "Sql query failed...";
-
+public class TestTableQueries {
     private static final String INSERT_STR = "INSERT INTO test (name, status_id, method_name, project_id, session_id, " +
             "start_time, end_time, env, browser, author_id) VALUES ('%s', %s, '%s', %s, %s, '%s', %s, '%s', '%s', %s)";
     private static final String SELECT_STR_SEARCH = "SELECT * FROM test WHERE id LIKE '%%%s%%' limit 10";
@@ -46,7 +24,10 @@ public class TestTable extends Const {
     private static final String SELECT_BY_ID = "SELECT * FROM test WHERE id = %s";
     private static final String DELETE_BY_ID = "DELETE FROM test WHERE id = %s";
 
-    public ArrayList<TestTable> getListWithTwoNumbersRepeating() {
+    private static final int NUMBER_NINE = 9;
+    private static final int NUMBER_ELEVEN = 11;
+
+    public ArrayList<TestTable> getListWithTwoNumbersRepeating(String authorProject, String login, String email) {
         String twoNumberRepeating = String.valueOf(getRandomNumberFromOneToMaxValue(NUMBER_NINE) * NUMBER_ELEVEN);
         String query = String.format(SELECT_STR_SEARCH, twoNumberRepeating);
         ResultSet resultSet = sendSelectQuery(query);
@@ -63,7 +44,7 @@ public class TestTable extends Const {
                 test.end_time = resultSet.getTimestamp(COLUMN_END_TIME);
                 test.env = resultSet.getString(COLUMN_ENV);
                 test.browser = resultSet.getString(COLUMN_BROWSER);
-                test.author_id = getIdAuthor(NAME_AUTHOR_PROJECT, AUTHOR_LOGIN, AUTHOR_EMAIL);
+                test.author_id = getIdAuthor(authorProject, login, email);
                 listTests.add(test);
             }
         } catch (SQLException e) {
@@ -147,22 +128,5 @@ public class TestTable extends Const {
             Logger.getInstance().error(SQL_QUERY_FAILED + e);
             throw new IllegalArgumentException(SQL_QUERY_FAILED, e);
         }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-
-        TestTable testTable = (TestTable) obj;
-        return name.equals(testTable.name) && status_id == testTable.status_id &&
-                method_name.equals(testTable.method_name) && project_id == testTable.project_id &&
-                session_id == testTable.session_id && start_time.equals(testTable.start_time) &&
-                end_time.equals(testTable.end_time) && env.equals(testTable.env) && browser.equals(testTable.browser) &&
-                author_id == testTable.author_id;
     }
 }

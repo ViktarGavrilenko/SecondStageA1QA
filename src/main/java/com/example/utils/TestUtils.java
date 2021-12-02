@@ -8,12 +8,12 @@ import java.sql.Timestamp;
 
 import static com.example.utils.ArithmeticUtils.getRandomNumberFromOneToMaxValue;
 import static com.example.utils.ArithmeticUtils.updateTime;
+import static com.example.utils.DatabaseConst.*;
 import static com.example.utils.MySqlUtils.sendSelectQuery;
 import static com.example.utils.MySqlUtils.sendSqlQuery;
 
-public class TestUtils extends Const {
+public class TestUtils {
     private static final int NUMBER_OF_STATUSES = 3;
-    private static final String SQL_EXCEPTION = "SQL Exception...";
     private static final String SELECT_BY_ID = "SELECT * FROM test WHERE id = %s";
     private static final String UPDATE_BY_ID =
             "UPDATE test SET status_id = %s, start_time = '%s', end_time = '%s' WHERE id = %s";
