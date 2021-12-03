@@ -8,7 +8,8 @@ import java.sql.Timestamp;
 
 import static com.example.utils.ArithmeticUtils.getRandomNumberFromOneToMaxValue;
 import static com.example.utils.ArithmeticUtils.updateTime;
-import static com.example.utils.DatabaseConst.*;
+import static com.example.utils.DatabaseColumnNames.*;
+import static com.example.utils.DatabaseConst.SQL_EXCEPTION;
 import static com.example.utils.MySqlUtils.sendSelectQuery;
 import static com.example.utils.MySqlUtils.sendSqlQuery;
 
@@ -28,12 +29,12 @@ public class TestUtils {
 
         try {
             resultSet.next();
-            while (statusId == resultSet.getInt(COLUMN_STATUS_ID)) {
+            while (statusId == resultSet.getInt(status_id.toString())) {
                 statusId = getRandomNumberFromOneToMaxValue(NUMBER_OF_STATUSES);
             }
 
-            newStartTime = updateTime(resultSet.getTimestamp(COLUMN_START_TIME));
-            newEndTime = updateTime(resultSet.getTimestamp(COLUMN_END_TIME));
+            newStartTime = updateTime(resultSet.getTimestamp(start_time.toString()));
+            newEndTime = updateTime(resultSet.getTimestamp(end_time.toString()));
 
             if (newStartTime.after(newEndTime)) {
                 Timestamp temp = newEndTime;

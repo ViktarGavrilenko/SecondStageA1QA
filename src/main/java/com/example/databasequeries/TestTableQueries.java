@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import static com.example.databasequeries.AuthorTableQueries.getIdAuthor;
 import static com.example.databasequeries.ProjectTableQueries.getIdProject;
 import static com.example.utils.ArithmeticUtils.getRandomNumberFromOneToMaxValue;
-import static com.example.utils.DatabaseConst.*;
+import static com.example.utils.DatabaseColumnNames.*;
+import static com.example.utils.DatabaseConst.SQL_QUERY_FAILED;
 import static com.example.utils.MySqlUtils.sendSelectQuery;
 import static com.example.utils.MySqlUtils.sendSqlQuery;
 import static com.example.utils.StringUtils.addSlashes;
@@ -35,15 +36,15 @@ public class TestTableQueries {
         try {
             while (resultSet.next()) {
                 TestTable test = new TestTable();
-                test.name = resultSet.getString(COLUMN_NAME);
-                test.status_id = resultSet.getInt(COLUMN_STATUS_ID);
-                test.method_name = resultSet.getString(COLUMN_METHOD_NAME);
+                test.name = resultSet.getString(name.toString());
+                test.status_id = resultSet.getInt(status_id.toString());
+                test.method_name = resultSet.getString(method_name.toString());
                 test.project_id = getIdProject(getProjectName());
-                test.session_id = resultSet.getInt(COLUMN_SESSION_ID);
-                test.start_time = resultSet.getTimestamp(COLUMN_START_TIME);
-                test.end_time = resultSet.getTimestamp(COLUMN_END_TIME);
-                test.env = resultSet.getString(COLUMN_ENV);
-                test.browser = resultSet.getString(COLUMN_BROWSER);
+                test.session_id = resultSet.getInt(session_id.toString());
+                test.start_time = resultSet.getTimestamp(start_time.toString());
+                test.end_time = resultSet.getTimestamp(end_time.toString());
+                test.env = resultSet.getString(env.toString());
+                test.browser = resultSet.getString(browser.toString());
                 test.author_id = getIdAuthor(authorProject, login, email);
                 listTests.add(test);
             }
@@ -112,16 +113,16 @@ public class TestTableQueries {
         ResultSet resultSet = sendSelectQuery(query);
         try {
             if (resultSet.next()) {
-                test.name = resultSet.getString(COLUMN_NAME);
-                test.status_id = resultSet.getInt(COLUMN_STATUS_ID);
-                test.method_name = resultSet.getString(COLUMN_METHOD_NAME);
-                test.project_id = resultSet.getInt(COLUMN_PROJECT_ID);
-                test.session_id = resultSet.getInt(COLUMN_SESSION_ID);
-                test.start_time = resultSet.getTimestamp(COLUMN_START_TIME);
-                test.end_time = resultSet.getTimestamp(COLUMN_END_TIME);
-                test.env = resultSet.getString(COLUMN_ENV);
-                test.browser = resultSet.getString(COLUMN_BROWSER);
-                test.author_id = resultSet.getInt(COLUMN_AUTHOR_ID);
+                test.name = resultSet.getString(name.toString());
+                test.status_id = resultSet.getInt(status_id.toString());
+                test.method_name = resultSet.getString(method_name.toString());
+                test.project_id = resultSet.getInt(project_id.toString());
+                test.session_id = resultSet.getInt(session_id.toString());
+                test.start_time = resultSet.getTimestamp(start_time.toString());
+                test.end_time = resultSet.getTimestamp(end_time.toString());
+                test.env = resultSet.getString(env.toString());
+                test.browser = resultSet.getString(browser.toString());
+                test.author_id = resultSet.getInt(author_id.toString());
             }
             return test;
         } catch (SQLException e) {
