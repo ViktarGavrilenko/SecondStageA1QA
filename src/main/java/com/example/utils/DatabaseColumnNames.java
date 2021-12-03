@@ -10,5 +10,5 @@ public enum DatabaseColumnNames {
     end_time,
     env,
     browser,
-    author_id,
+    author_id
 }
