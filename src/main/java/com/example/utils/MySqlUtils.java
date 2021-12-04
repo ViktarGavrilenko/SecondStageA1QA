@@ -6,6 +6,9 @@ import aquality.selenium.core.utilities.JsonSettingsFile;
 
 import java.sql.*;
 
+import static com.example.utils.DatabaseConst.CONNECTION_FAILED;
+import static com.example.utils.DatabaseConst.SQL_QUERY_FAILED;
+
 public class MySqlUtils {
     protected static final ISettingsFile MYSQL_CONFIG_FILE = new JsonSettingsFile("mysqlConfig.json");
     private static final String DB_HOST = MYSQL_CONFIG_FILE.getValue("/dbHost").toString();
@@ -13,9 +16,6 @@ public class MySqlUtils {
     private static final String DB_USER = MYSQL_CONFIG_FILE.getValue("/dbUser").toString();
     private static final String DB_PASS = MYSQL_CONFIG_FILE.getValue("/dbPass").toString();
     private static final String DB_NAME = MYSQL_CONFIG_FILE.getValue("/dbName").toString();
-
-    private static final String SQL_QUERY_FAILED = "Sql query failed...";
-    private static final String CONNECTION_FAILED = "Connection failed...";
 
     private static Connection connection;
 

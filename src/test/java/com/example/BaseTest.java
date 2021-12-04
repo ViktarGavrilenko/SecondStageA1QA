@@ -4,10 +4,9 @@ import aquality.selenium.browser.AqualityServices;
 import aquality.selenium.core.logging.Logger;
 import aquality.selenium.core.utilities.ISettingsFile;
 import aquality.selenium.core.utilities.JsonSettingsFile;
-import com.example.modelsdatabase.TestTable;
+import com.example.databasemodels.TestTable;
 import com.example.pageobject.FormOfRegistration;
-import com.example.utils.Const;
-import org.openqa.selenium.Dimension;
+import com.example.utils.DatabaseConst;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -19,21 +18,24 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static aquality.selenium.browser.AqualityServices.getBrowser;
-import static com.example.modelsdatabase.AuthorTable.getIdAuthor;
-import static com.example.modelsdatabase.LogTable.addLogInTestTable;
-import static com.example.modelsdatabase.ProjectTable.getIdProject;
-import static com.example.modelsdatabase.SessionTable.getIdSession;
+import static com.example.databasequeries.AuthorTableQueries.getIdAuthor;
+import static com.example.databasequeries.LogTableQueries.addLogInTestTable;
+import static com.example.databasequeries.ProjectTableQueries.getIdProject;
+import static com.example.databasequeries.SessionTableQueries.getIdSession;
+import static com.example.databasequeries.TestTableQueries.*;
 import static com.example.utils.BrowserUtils.getComputerName;
 import static com.example.utils.MySqlUtils.closeConnection;
 import static com.example.utils.StringUtils.getLogOfTest;
 import static com.example.utils.StringUtils.getProjectName;
 import static org.testng.Assert.assertTrue;
 
-public class BaseTest extends Const {
+public class BaseTest extends DatabaseConst {
     protected static final ISettingsFile CONFIG_FILE = new JsonSettingsFile("config.json");
     protected static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
     protected static final String DEFAULT_URL = CONFIG_FILE.getValue("/mainPage").toString();
     protected static final String NAME_AUTHOR_PROJECT = TEST_DATA_FILE.getValue("/name").toString();
+    private static final String LOGIN_AUTHOR = TEST_DATA_FILE.getValue("/login").toString();
+    private static final String EMAIL_AUTHOR = TEST_DATA_FILE.getValue("/email").toString();
     protected static FormOfRegistration formOfRegistration = new FormOfRegistration();
 
     @BeforeMethod
@@ -58,18 +60,18 @@ public class BaseTest extends Const {
         test.end_time = Timestamp.valueOf(formatter.format(new Date(result.getEndMillis())));
         test.env = getComputerName();
         test.browser = getBrowser().getBrowserName().name();
-        test.author_id = getIdAuthor(NAME_AUTHOR_PROJECT);
+        test.author_id = getIdAuthor(NAME_AUTHOR_PROJECT, LOGIN_AUTHOR, EMAIL_AUTHOR);
 
-        test.addDataInTestTable(test);
+        addDataInTestTable(test);
 
-        addLogInTestTable(getLogOfTest(), 0, test.getMaxIdTestTable());
+        addLogInTestTable(getLogOfTest(), 0, getMaxIdTestTable());
         if (test.status_id != 1) {
             StringWriter sw = new StringWriter();
             result.getThrowable().printStackTrace(new PrintWriter(sw));
-            addLogInTestTable(sw.toString(), 1, test.getMaxIdTestTable());
+            addLogInTestTable(sw.toString(), 1, getMaxIdTestTable());
         }
 
-        assertTrue(test.isDataInDatabase(test), "The test result was not added to the database");
+        assertTrue(isDataInDatabase(test), "The test result was not added to the database");
 
         closeConnection();
         if (AqualityServices.isBrowserStarted()) {
