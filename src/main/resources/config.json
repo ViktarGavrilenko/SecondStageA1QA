@@ -1,6 +1,4 @@
 {
   "mainPage": "https://vk.com/",
-  "login": "+375291660762",
-  "password": "*****",
   "startApiVk": "https://api.vk.com/method/"
 }

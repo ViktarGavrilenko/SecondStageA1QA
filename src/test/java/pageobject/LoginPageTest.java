@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
+import static Utils.ApiConst.*;
 import static Utils.StringUtils.generateRandomText;
 import static Utils.VkApiPhotosUtils.savePhoto;
 import static Utils.VkApiUtils.*;
@@ -22,8 +23,8 @@ public class LoginPageTest {
     private static final ISettingsFile CONFIG_FILE = new JsonSettingsFile("config.json");
     private static final ISettingsFile TEST_DATA_FILE = new JsonSettingsFile("testData.json");
     private static final String DEFAULT_URL = CONFIG_FILE.getValue("/mainPage").toString();
-    private static final String PHONE_OR_EMAIL = CONFIG_FILE.getValue("/login").toString();
-    private static final String PASSWORD = CONFIG_FILE.getValue("/password").toString();
+    private static final String PHONE_OR_EMAIL = TEST_DATA_FILE.getValue("/login").toString();
+    private static final String PASSWORD = TEST_DATA_FILE.getValue("/password").toString();
     private static final String TOKEN = TEST_DATA_FILE.getValue("/token").toString();
     private static final String VERSION_API_VK = TEST_DATA_FILE.getValue("/v").toString();
 
@@ -31,15 +32,6 @@ public class LoginPageTest {
             TEST_DATA_FILE.getValue("/photo").toString();
     private static final String PATH_PHOTO_DOWNLOAD = System.getProperty("user.dir") +
             TEST_DATA_FILE.getValue("/photoDownload").toString();
-
-    private static final String NAME_FIELD_PHOTO = "photo";
-    private static final String VERSION = "v";
-    private static final String ACCESS_TOKEN = "access_token";
-    private static final String MESSAGE = "message";
-    private static final String OWNER_ID = "owner_id";
-    private static final String POST_ID = "post_id";
-    private static final String ATTACHMENTS = "attachments";
-    private static final String ITEM_ID = "item_id";
 
     private static final LoginPage LOGIN_PAGE = new LoginPage();
     private static final WallPage WALL_PAGE = new WallPage();
